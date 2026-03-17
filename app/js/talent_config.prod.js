@@ -5,7 +5,10 @@ export const TALENT_CONFIG_PROD = {
   appName: "Orland Talent",
   portalUrl: "https://talent.orlandmanagement.com",
   backendBaseUrl: "https://api.orlandmanagement.com",
-  ssoLoginUrl: "https://sso.orlandmanagement.com/app/pages/sso/login.html",
-  ssoDeniedUrl: "https://sso.orlandmanagement.com/app/pages/sso/access-denied.html",
+  ssoLoginUrl: "https://sso.orlandmanagement.com/",
+  ssoDeniedUrl: "https://sso.orlandmanagement.com/access-denied.html",
+  envName: "production"
+};
+ied.html",
   envName: "production"
 };

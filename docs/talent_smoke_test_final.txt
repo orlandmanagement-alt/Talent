@@ -1,0 +1,212 @@
+==================================================
+TALENT PORTAL SMOKE TEST FINAL
+Portal:
+- https://talent.orlandmanagement.com
+Backend:
+- https://dashboard.orlandmanagement.com
+SSO:
+- https://sso.orlandmanagement.com
+==================================================
+
+A. PRE-CHECK
+--------------------------------------------------
+[ ] Cookie sid cross-subdomain aktif
+[ ] User test punya role talent
+[ ] Backend endpoint talent aktif
+[ ] talent_config production sudah benar
+[ ] shell tampil normal
+[ ] navigation tampil normal
+
+==================================================
+B. LOGIN FLOW
+--------------------------------------------------
+Langkah:
+1. Login via SSO
+2. Redirect ke talent portal
+3. Buka /app/pages/talent/index.html
+
+Expected:
+[ ] user tampil di header
+[ ] env tampil
+[ ] nav tampil
+[ ] tidak redirect balik ke login
+[ ] logout button tampil
+
+==================================================
+C. PAGE: DASHBOARD
+--------------------------------------------------
+File:
+- /app/pages/talent/index.html
+
+Expected:
+[ ] status "Session active" tampil
+[ ] shell tampil normal
+
+==================================================
+D. PAGE: PROFILE
+--------------------------------------------------
+File:
+- /app/pages/talent/profile.html
+
+Expected:
+[ ] profile info tampil
+[ ] display name tampil
+[ ] slug tampil
+[ ] gender/dob/location tampil
+[ ] contact public tampil
+[ ] interest list tampil
+[ ] skill list tampil
+[ ] progress tampil
+
+Endpoint:
+- /functions/api/talent/profile_get
+
+==================================================
+E. PAGE: PROJECTS
+--------------------------------------------------
+File:
+- /app/pages/talent/projects.html
+
+Expected:
+[ ] search form tampil
+[ ] reload jalan
+[ ] daftar project tampil
+[ ] error tampil di shell notice bila gagal
+
+Endpoint:
+- /functions/api/talent/projects_list
+
+==================================================
+F. PAGE: APPLY PROJECT
+--------------------------------------------------
+File:
+- /app/pages/talent/project-apply.html
+atau:
+- /app/pages/talent/project-apply.html?project_role_id=ROLE_ID
+
+Expected:
+[ ] input role id tampil
+[ ] query role id auto fill jika ada
+[ ] submit sukses -> success notice tampil
+[ ] invalid input -> error notice tampil
+
+Endpoint:
+- /functions/api/talent/project_apply
+
+==================================================
+G. PAGE: APPLICATIONS
+--------------------------------------------------
+File:
+- /app/pages/talent/applications.html
+
+Expected:
+[ ] daftar application tampil
+[ ] tombol withdraw muncul untuk status aktif
+[ ] withdraw sukses -> list refresh
+[ ] application withdrawn tampil
+
+Endpoint:
+- /functions/api/talent/my_applications
+- /functions/api/talent/application_withdraw
+
+==================================================
+H. PAGE: INVITES
+--------------------------------------------------
+File:
+- /app/pages/talent/invites.html
+
+Expected:
+[ ] daftar invite tampil
+[ ] project title tampil
+[ ] role tampil
+[ ] status tampil
+
+Endpoint:
+- /functions/api/talent/my_invites
+
+==================================================
+I. PAGE: INVITE DETAIL
+--------------------------------------------------
+File:
+- /app/pages/talent/invite-detail.html?invite_id=INVITE_ID
+
+Expected:
+[ ] tanpa id -> tampil "Invite id is missing."
+[ ] dengan id valid -> detail invite tampil
+[ ] project tampil
+[ ] role tampil
+[ ] status tampil
+[ ] message tampil
+[ ] response tampil
+
+Endpoint:
+- /functions/api/talent/invite_detail
+
+==================================================
+J. PAGE: INVITE RESPOND
+--------------------------------------------------
+File:
+- /app/pages/talent/invite-respond.html?invite_id=INVITE_ID
+
+Expected:
+[ ] invite id auto fill bila query ada
+[ ] accepted/declined bisa dipilih
+[ ] submit sukses -> success notice tampil
+[ ] error tampil bila invalid
+
+Endpoint:
+- /functions/api/talent/invite_respond
+
+==================================================
+K. PAGE: BOOKINGS
+--------------------------------------------------
+File:
+- /app/pages/talent/bookings.html
+
+Expected:
+[ ] daftar booking tampil
+[ ] project title tampil
+[ ] role tampil
+[ ] status tampil
+
+Endpoint:
+- /functions/api/talent/my_bookings
+
+==================================================
+L. HEADER / SHELL
+--------------------------------------------------
+Expected:
+[ ] app name tampil
+[ ] signed in user tampil
+[ ] env name tampil
+[ ] nav tampil
+[ ] logout jalan
+[ ] shortcut SSO tampil
+[ ] shortcut Dashboard API tampil
+[ ] shell notice tampil saat error/success
+
+==================================================
+M. LOGOUT
+--------------------------------------------------
+Langkah:
+1. klik Logout dari header
+
+Expected:
+[ ] call /functions/api/sso/logout
+[ ] cookie sid clear
+[ ] redirect ke SSO login
+
+==================================================
+N. FINAL TALENT CHECK
+--------------------------------------------------
+[ ] dashboard ok
+[ ] profile ok
+[ ] projects ok
+[ ] apply project ok
+[ ] applications ok
+[ ] invites ok
+[ ] invite detail ok
+[ ] invite respond ok
+[ ] bookings ok
+[ ] logout ok
+==================================================

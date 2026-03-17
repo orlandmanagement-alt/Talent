@@ -1,6 +1,6 @@
-import { bootTalent } from "../../js/talent_boot.js";
-import { talentPost } from "../../js/talent_api.js";
-import { showTalentNotice } from "../../js/talent_notice.js";
+import { bootTalent } from "../assets/js/talent_boot.js";
+import { talentPost } from "../assets/js/talent_api.js";
+import { showTalentNotice } from "../assets/js/talent_notice.js";
 
 function getEl(id){
   return document.getElementById(id);
@@ -37,7 +37,7 @@ export default async function(){
     }
 
     setInfo("Submitting response...");
-    const res = await talentPost("/functions/api/talent/invite_respond", {
+    const res = await talentPost("/api/talent/invite_respond", {
       invite_id: inviteIdValue,
       decision,
       message

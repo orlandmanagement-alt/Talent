@@ -7,9 +7,9 @@
 </head>
 <body>
   <script type="module">
-    import { bootTalent } from "../../js/talent_boot.js";
-    import { mountTalentShell } from "../../js/talent_shell.js";
-    import mod from "../../modules/talent/mod_talent_dashboard.js";
+    import { bootTalent } from "./assets/js/talent_boot.js";
+    import { mountTalentShell } from "./assets/js/talent_shell.js";
+    import mod from "./modules/mod_talent_dashboard.js";
 
     const user = await bootTalent();
     if(user){

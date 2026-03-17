@@ -1,4 +1,4 @@
-import { bootTalent } from "../../js/talent_boot.js";
+import { bootTalent } from "../assets/js/talent_boot.js";
 
 export default async function(){
   const user = await bootTalent();

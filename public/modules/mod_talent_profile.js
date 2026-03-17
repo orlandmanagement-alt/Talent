@@ -1,6 +1,6 @@
-import { bootTalent } from "../../js/talent_boot.js";
-import { talentGet } from "../../js/talent_api.js";
-import { showTalentNotice } from "../../js/talent_notice.js";
+import { bootTalent } from "../assets/js/talent_boot.js";
+import { talentGet } from "../assets/js/talent_api.js";
+import { showTalentNotice } from "../assets/js/talent_notice.js";
 
 function getEl(id){
   return document.getElementById(id);
@@ -39,7 +39,7 @@ export default async function(){
   const info = getEl("profileInfo");
   if(info) info.textContent = "Loading talent profile data...";
 
-  const res = await talentGet("/functions/api/talent/profile_get");
+  const res = await talentGet("/api/talent/profile_get");
   if(!res.ok){
     if(info) info.textContent = "Failed to load profile.";
     showTalentNotice(res?.data?.message || "Failed to load profile.", "error");

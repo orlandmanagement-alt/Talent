@@ -1,6 +1,6 @@
-import { bootTalent } from "../../js/talent_boot.js";
-import { talentGet } from "../../js/talent_api.js";
-import { showTalentNotice } from "../../js/talent_notice.js";
+import { bootTalent } from "../assets/js/talent_boot.js";
+import { talentGet } from "../assets/js/talent_api.js";
+import { showTalentNotice } from "../assets/js/talent_notice.js";
 
 function getEl(id){
   return document.getElementById(id);
@@ -44,7 +44,7 @@ export default async function(){
   if(!user) return;
 
   setInfo("Loading invites...");
-  const res = await talentGet("/functions/api/talent/my_invites");
+  const res = await talentGet("/api/talent/my_invites");
 
   if(!res.ok){
     setInfo("Failed to load invites.");

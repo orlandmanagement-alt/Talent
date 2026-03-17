@@ -1,7 +1,7 @@
-import { bootTalent } from "../../js/talent_boot.js";
-import { talentGet } from "../../js/talent_api.js";
-import { withTalentLoading } from "../../js/talent_loading.js";
-import { showTalentNotice } from "../../js/talent_notice.js";
+import { bootTalent } from "../assets/js/talent_boot.js";
+import { talentGet } from "../assets/js/talent_api.js";
+import { withTalentLoading } from "../assets/js/talent_loading.js";
+import { showTalentNotice } from "../assets/js/talent_notice.js";
 
 function getEl(id){
   return document.getElementById(id);
@@ -46,8 +46,8 @@ function renderProjects(items){
 
 async function loadProjects(keyword = ""){
   const path = keyword
-    ? `/functions/api/talent/projects_list?q=${encodeURIComponent(keyword)}`
-    : "/functions/api/talent/projects_list";
+    ? `/api/talent/projects_list?q=${encodeURIComponent(keyword)}`
+    : "/api/talent/projects_list";
 
   setInfo("Loading projects...");
 

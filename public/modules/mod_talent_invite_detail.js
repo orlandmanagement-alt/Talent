@@ -1,6 +1,6 @@
-import { bootTalent } from "../../js/talent_boot.js";
-import { talentGet } from "../../js/talent_api.js";
-import { showTalentNotice } from "../../js/talent_notice.js";
+import { bootTalent } from "../assets/js/talent_boot.js";
+import { talentGet } from "../assets/js/talent_api.js";
+import { showTalentNotice } from "../assets/js/talent_notice.js";
 
 function getEl(id){ return document.getElementById(id); }
 function getQuery(name){ return new URL(location.href).searchParams.get(name) || ""; }
@@ -22,7 +22,7 @@ export default async function(){
     return;
   }
 
-  const res = await talentGet(`/functions/api/talent/invite_detail?invite_id=${encodeURIComponent(inviteId)}`);
+  const res = await talentGet(`/api/talent/invite_detail?invite_id=${encodeURIComponent(inviteId)}`);
   if(!res.ok){
     if(info) info.textContent = "Failed to load invite detail.";
     showTalentNotice(res?.data?.message || "Failed to load invite detail.", "error");

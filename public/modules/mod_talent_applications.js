@@ -1,6 +1,6 @@
-import { bootTalent } from "../../js/talent_boot.js";
-import { talentGet, talentPost } from "../../js/talent_api.js";
-import { showTalentNotice } from "../../js/talent_notice.js";
+import { bootTalent } from "../assets/js/talent_boot.js";
+import { talentGet, talentPost } from "../assets/js/talent_api.js";
+import { showTalentNotice } from "../assets/js/talent_notice.js";
 
 function getEl(id){
   return document.getElementById(id);
@@ -13,7 +13,7 @@ function setInfo(message){
 
 async function withdrawApplication(id){
   setInfo("Withdrawing application...");
-  const res = await talentPost("/functions/api/talent/application_withdraw", {
+  const res = await talentPost("/api/talent/application_withdraw", {
     application_id: id
   });
 
@@ -67,7 +67,7 @@ function renderItems(items){
 
 async function loadApplications(){
   setInfo("Loading applications...");
-  const res = await talentGet("/functions/api/talent/my_applications");
+  const res = await talentGet("/api/talent/my_applications");
 
   if(!res.ok){
     setInfo("Failed to load applications.");

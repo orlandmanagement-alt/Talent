@@ -1,3 +1,5 @@
+import { TALENT_CONFIG, talentApiUrl } from "../assets/js/talent_config.js";
+
 function getEl(id){
   return document.getElementById(id);
 }
@@ -49,9 +51,8 @@ function renderSessions(items){
 
   box.innerHTML = items.map(item => `
     <div class="talent-item">
-      <div class="talent-item-title">${item.device_info || "Unknown Device"}</div>
+      <div class="talent-item-title">${item.device_info || item.device_name || "Unknown Device"}</div>
       <div class="talent-item-meta">
-        IP: ${item.ip_address || "-"}<br>
         Status: ${item.status || "-"}<br>
         Expires: ${item.expires_at || "-"}
       </div>
@@ -61,20 +62,18 @@ function renderSessions(items){
 }
 
 async function init(){
-  const me = await getJson("/functions/api/auth/me");
+  const me = await getJson(talentApiUrl("/api/sso/me"));
   if(me.status !== "ok"){
-    location.href = "/app/pages/sso/login.html";
+    location.href = `${TALENT_CONFIG.ssoLoginUrl}?next=${encodeURIComponent(location.href)}&portal=talent`;
     return;
   }
 
-  const profile = await getJson("/functions/api/talent/profile_get");
-  const sessions = await getJson("/functions/api/auth/sessions");
-
+  const profile = await getJson(talentApiUrl("/api/talent/profile_get"));
   renderPhoneBox({
-    phone_verified: Boolean(profile?.data?.visibility?.phone_verified)
+    phone_verified: Boolean(profile?.data?.progress?.phone_verified)
   });
 
-  renderSessions(sessions?.data?.items || []);
+  renderSessions([]);
 }
 
 init();

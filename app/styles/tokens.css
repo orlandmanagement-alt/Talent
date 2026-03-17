@@ -1,0 +1,160 @@
+:root{
+  --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+
+  --color-white: #ffffff;
+  --color-black: #000000;
+
+  --color-slate-25: #fcfcfd;
+  --color-slate-50: #f8fafc;
+  --color-slate-100: #f1f5f9;
+  --color-slate-150: #e9eef5;
+  --color-slate-200: #e2e8f0;
+  --color-slate-300: #cbd5e1;
+  --color-slate-400: #94a3b8;
+  --color-slate-500: #64748b;
+  --color-slate-600: #475569;
+  --color-slate-700: #334155;
+  --color-slate-800: #1e293b;
+  --color-slate-900: #0f172a;
+  --color-slate-950: #020617;
+
+  --color-blue-50: #eff6ff;
+  --color-blue-100: #dbeafe;
+  --color-blue-200: #bfdbfe;
+  --color-blue-300: #93c5fd;
+  --color-blue-500: #3b82f6;
+  --color-blue-600: #2563eb;
+  --color-blue-700: #1d4ed8;
+  --color-blue-800: #1e40af;
+
+  --color-emerald-50: #ecfdf5;
+  --color-emerald-100: #d1fae5;
+  --color-emerald-500: #10b981;
+  --color-emerald-600: #059669;
+  --color-emerald-700: #047857;
+
+  --color-amber-50: #fffbeb;
+  --color-amber-100: #fef3c7;
+  --color-amber-300: #fcd34d;
+  --color-amber-500: #f59e0b;
+  --color-amber-700: #b45309;
+  --color-amber-800: #92400e;
+
+  --color-red-50: #fef2f2;
+  --color-red-100: #fee2e2;
+  --color-red-200: #fecaca;
+  --color-red-500: #ef4444;
+  --color-red-600: #dc2626;
+  --color-red-700: #b91c1c;
+  --color-red-800: #991b1b;
+
+  --color-violet-50: #f5f3ff;
+  --color-violet-100: #ede9fe;
+  --color-violet-500: #8b5cf6;
+  --color-violet-600: #7c3aed;
+  --color-violet-700: #6d28d9;
+
+  --app-bg: var(--color-slate-50);
+  --app-bg-muted: var(--color-slate-100);
+  --app-bg-soft: var(--color-slate-25);
+  --app-surface: var(--color-white);
+  --app-surface-2: #fdfdfd;
+  --app-sidebar-bg: var(--color-slate-900);
+  --app-sidebar-text: #e2e8f0;
+  --app-sidebar-text-muted: #cbd5e1;
+  --app-border: var(--color-slate-200);
+  --app-border-strong: var(--color-slate-300);
+  --app-text: #111827;
+  --app-text-soft: #374151;
+  --app-text-muted: var(--color-slate-500);
+  --app-heading: #0f172a;
+
+  --brand-primary: var(--color-blue-600);
+  --brand-primary-hover: var(--color-blue-700);
+  --brand-primary-soft: var(--color-blue-50);
+  --brand-primary-border: var(--color-blue-200);
+
+  --state-success-bg: var(--color-emerald-50);
+  --state-success-border: var(--color-emerald-100);
+  --state-success-text: var(--color-emerald-700);
+
+  --state-warning-bg: var(--color-amber-50);
+  --state-warning-border: var(--color-amber-100);
+  --state-warning-text: var(--color-amber-800);
+
+  --state-danger-bg: var(--color-red-50);
+  --state-danger-border: var(--color-red-200);
+  --state-danger-text: var(--color-red-800);
+
+  --state-info-bg: var(--color-blue-50);
+  --state-info-border: var(--color-blue-100);
+  --state-info-text: var(--color-blue-800);
+
+  --shadow-xs: 0 1px 2px rgba(15, 23, 42, .05);
+  --shadow-sm: 0 2px 8px rgba(15, 23, 42, .06);
+  --shadow-md: 0 8px 24px rgba(15, 23, 42, .08);
+  --shadow-lg: 0 14px 36px rgba(15, 23, 42, .12);
+  --shadow-xl: 0 20px 48px rgba(15, 23, 42, .16);
+
+  --radius-2xs: 4px;
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 24px;
+  --radius-round: 999px;
+
+  --space-0: 0;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 28px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  --text-2xs: 11px;
+  --text-xs: 12px;
+  --text-sm: 13px;
+  --text-md: 14px;
+  --text-lg: 16px;
+  --text-xl: 18px;
+  --text-2xl: 22px;
+  --text-3xl: 28px;
+  --text-4xl: 34px;
+
+  --line-tight: 1.2;
+  --line-normal: 1.45;
+  --line-loose: 1.65;
+
+  --container-xs: 560px;
+  --container-sm: 720px;
+  --container-md: 960px;
+  --container-lg: 1180px;
+  --container-xl: 1320px;
+
+  --sidebar-width: 260px;
+  --topbar-height: 64px;
+  --content-max-width: 1400px;
+
+  --z-base: 1;
+  --z-dropdown: 50;
+  --z-sticky: 100;
+  --z-drawer: 500;
+  --z-modal: 700;
+  --z-toast: 900;
+
+  --focus-ring-color: rgba(37, 99, 235, .16);
+  --focus-ring: 0 0 0 4px var(--focus-ring-color);
+
+  --group-accent: var(--brand-primary);
+  --group-accent-soft: var(--brand-primary-soft);
+  --group-accent-border: var(--brand-primary-border);
+  --group-accent-text: var(--color-blue-800);
+}

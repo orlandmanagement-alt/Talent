@@ -1,0 +1,7 @@
+.theme-security,
+.group-security{
+  --group-accent: #b91c1c;
+  --group-accent-soft: #fef2f2;
+  --group-accent-border: #fecaca;
+  --group-accent-text: #991b1b;
+}

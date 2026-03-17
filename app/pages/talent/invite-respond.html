@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Respond Invite</title>
+</head>
+<body>
+  <script type="module">
+    import { mountTalentShell } from "../../js/talent_shell.js";
+    import mod from "../../modules/talent/mod_talent_invite_respond.js";
+
+    mountTalentShell("Respond to Invite", `
+      <div style="margin-top:16px;">
+        <div id="talentInviteRespondInfo">Ready.</div>
+      </div>
+
+      <div style="margin-top:16px;">
+        <form id="talentInviteRespondForm">
+          <input id="talentInviteId" type="text" placeholder="Invite ID">
+          <select id="talentInviteDecision">
+            <option value="accepted">Accept</option>
+            <option value="declined">Decline</option>
+          </select>
+          <textarea id="talentInviteResponseMessage" placeholder="Response message (optional)"></textarea>
+          <button type="submit">Submit Response</button>
+        </form>
+      </div>
+    `);
+
+    mod();
+  </script>
+</body>
+</html>

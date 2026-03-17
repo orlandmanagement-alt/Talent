@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Talent Dashboard</title>
+</head>
+<body>
+  <script type="module">
+    import { bootTalent } from "../../js/talent_boot.js";
+    import { mountTalentShell } from "../../js/talent_shell.js";
+    import mod from "../../modules/talent/mod_talent_dashboard.js";
+
+    const user = await bootTalent();
+    if(user){
+      mountTalentShell("Dashboard", `
+        <div>
+          Status:
+          <strong id="talentStatus">Loading...</strong>
+        </div>
+      `);
+      mod();
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" class="theme-light group-talent">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Talent Security • Orland Management</title>
+  <link rel="stylesheet" href="/app/styles/tokens.css">
+  <link rel="stylesheet" href="/app/styles/base.css">
+  <link rel="stylesheet" href="/app/styles/layout.css">
+  <link rel="stylesheet" href="/app/styles/components.css">
+  <link rel="stylesheet" href="/app/styles/utilities.css">
+  <link rel="stylesheet" href="/app/styles/theme_global.css">
+  <link rel="stylesheet" href="/app/styles/theme_light.css">
+  <link rel="stylesheet" href="/app/styles/group_talent.css">
+  <link rel="stylesheet" href="/app/styles/talent_portal.css">
+</head>
+<body class="theme-light group-talent">
+  <div class="talent-shell">
+    <aside class="talent-sidebar">
+      <div class="talent-brand">Talent Portal</div>
+      <nav class="talent-nav">
+        <a href="/app/pages/talent/index.html">Dashboard</a>
+        <a href="/app/pages/talent/profile.html">My Profile</a>
+        <a class="active" href="/app/pages/talent/security.html">Security</a>
+        <a href="/app/pages/sso/logout.html">Logout</a>
+      </nav>
+    </aside>
+
+    <main class="talent-main">
+      <div class="talent-title">Security</div>
+      <div class="talent-subtitle">Manage your active sessions and review current security status.</div>
+
+      <section class="talent-section">
+        <div class="talent-section-head">PHONE VERIFICATION</div>
+        <div class="talent-section-body">
+          <div id="phoneVerificationBox" class="talent-item">
+            <div class="talent-item-title">Checking verification status...</div>
+            <div class="talent-item-meta">Please wait.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="talent-section">
+        <div class="talent-section-head">ACTIVE SESSIONS</div>
+        <div class="talent-section-body">
+          <div id="sessionList" class="talent-list">
+            <div class="talent-item">
+              <div class="talent-item-title">Loading sessions...</div>
+              <div class="talent-item-meta">Please wait while we fetch your active devices.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="/app/modules/talent/mod_talent_security.js"></script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Client Projects</title>
+</head>
+<body>
+  <h1>Client Projects</h1>
+
+  <div>
+    User:
+    <strong id="clientUserName"></strong>
+  </div>
+
+  <div style="margin-top:16px;">
+    <form id="projectSearchForm">
+      <input id="projectSearchInput" type="text" placeholder="Search project title">
+      <button type="submit">Search</button>
+      <button type="button" id="projectReloadBtn">Reload</button>
+    </form>
+  </div>
+
+  <div style="margin-top:16px;">
+    <h2>Project List</h2>
+    <div id="projectInfo">Loading projects...</div>
+    <ul id="projectList"></ul>
+  </div>
+
+  <script type="module">
+    import mod from "../../modules/client/mod_client_projects.js";
+    mod();
+  </script>
+</body>
+</html>

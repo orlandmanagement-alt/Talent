@@ -1,0 +1,7 @@
+.theme-admin,
+.group-admin{
+  --group-accent: #0f766e;
+  --group-accent-soft: #f0fdfa;
+  --group-accent-border: #99f6e4;
+  --group-accent-text: #115e59;
+}

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Apply Project</title>
+</head>
+<body>
+  <script type="module">
+    import { mountTalentShell } from "../../js/talent_shell.js";
+    import mod from "../../modules/talent/mod_talent_apply_project.js";
+
+    mountTalentShell("Apply to Project", `
+      <div style="margin-top:16px;">
+        <div id="talentApplyInfo">Ready.</div>
+      </div>
+
+      <div style="margin-top:16px;">
+        <form id="talentApplyForm">
+          <input id="talentApplyRoleId" type="text" placeholder="Project Role ID">
+          <textarea id="talentApplyMessage" placeholder="Application message (optional)"></textarea>
+          <button type="submit">Apply Now</button>
+        </form>
+      </div>
+    `);
+
+    mod();
+  </script>
+</body>
+</html>

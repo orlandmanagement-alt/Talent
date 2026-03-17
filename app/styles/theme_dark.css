@@ -1,0 +1,23 @@
+.theme-dark{
+  --app-bg: #0b1220;
+  --app-bg-muted: #111827;
+  --app-bg-soft: #0f172a;
+  --app-surface: #111827;
+  --app-surface-2: #0f172a;
+  --app-sidebar-bg: #020617;
+  --app-sidebar-text: #e5e7eb;
+  --app-sidebar-text-muted: #cbd5e1;
+  --app-border: rgba(255,255,255,.08);
+  --app-border-strong: rgba(255,255,255,.12);
+  --app-text: #e5e7eb;
+  --app-text-soft: #cbd5e1;
+  --app-text-muted: #94a3b8;
+  --app-heading: #ffffff;
+  --focus-ring-color: rgba(59,130,246,.22);
+}
+
+.theme-dark body,
+body.theme-dark{
+  background:var(--app-bg);
+  color:var(--app-text);
+}

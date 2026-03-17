@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>My Applications</title>
+</head>
+<body>
+  <script type="module">
+    import { mountTalentShell } from "../../js/talent_shell.js";
+    import mod from "../../modules/talent/mod_talent_applications.js";
+
+    mountTalentShell("My Applications", `
+      <div style="margin-top:16px;">
+        <div id="talentApplicationInfo">Loading applications...</div>
+        <ul id="talentApplicationList"></ul>
+      </div>
+    `);
+
+    mod();
+  </script>
+</body>
+</html>

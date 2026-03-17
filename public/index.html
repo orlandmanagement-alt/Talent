@@ -1,26 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Talent Dashboard</title>
-</head>
+<html>
 <body>
-  <script type="module">
-    import { bootTalent } from "./assets/js/talent_boot.js";
-    import { mountTalentShell } from "./assets/js/talent_shell.js";
-    import mod from "./modules/mod_talent_dashboard.js";
 
-    const user = await bootTalent();
-    if(user){
-      mountTalentShell("Dashboard", `
-        <div>
-          Status:
-          <strong id="talentStatus">Loading...</strong>
-        </div>
-      `);
-      mod();
-    }
-  </script>
+<script type="module">
+import { initSession } from "/assets/js/session.js";
+import { registerRoute, resolveRoute, resolveDefaultRoute } from "/assets/js/router.js";
+
+import dashboard from "/modules/mod_dashboard.js";
+import projects from "/modules/mod_projects.js";
+import profile from "/modules/mod_profile.js";
+
+await initSession();
+
+registerRoute("/", dashboard);
+registerRoute("/projects", projects);
+registerRoute("/profile", profile);
+registerRoute("/client", dashboard);
+registerRoute("/admin", dashboard);
+
+if(location.pathname === "/"){
+  history.replaceState({}, "", resolveDefaultRoute());
+}
+
+await resolveRoute();
+</script>
+
 </body>
 </html>

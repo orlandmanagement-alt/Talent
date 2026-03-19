@@ -1,44 +1,47 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
   <meta charset="utf-8">
-  <title>Portal</title>
-  <link rel="stylesheet" href="/assets/css/base.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal - Orland Management</title>
+  <style>
+      body { font-family: sans-serif; background-color: #f3f4f6; margin: 0; display: flex; align-items: center; justify-content: center; height: 100vh; }
+      .card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center; }
+      .btn { background: #6b8aed; color: white; border: none; padding: 12px 30px; border-radius: 30px; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: 20px;}
+  </style>
 </head>
 <body>
 
-<div id="app">
-  <div id="loading">Loading...</div>
+<div id="app" class="card">
+  <h2>Memeriksa Keamanan...</h2>
+  <p style="color:gray;">Menghubungkan ke Orland SSO</p>
 </div>
 
 <script type="module">
-import { checkSession, redirectToSSO, redirectToRegister } from "/assets/js/auth_guard.js";
-
-const portal = location.hostname.includes("client") ? "client" : "talent";
+import { checkSession } from "/assets/js/auth.js";
+import config from "/assets/js/config.js";
 
 async function init() {
   const user = await checkSession();
 
   if (user) {
-    // ✅ sudah login → masuk dashboard SPA
+    // PROTEKSI ROLE LINTAS PORTAL
+    if (user.role !== config.APP && user.role !== 'admin') {
+         // Jika Client iseng buka portal Talent, kembalikan ke habitatnya
+         window.location.href = user.role === 'client' ? 'https://client.orlandmanagement.com' : 'https://talent.orlandmanagement.com';
+         return;
+    }
+    // ✅ Sudah login & Role benar → masuk dashboard SPA
     window.location.href = "/dashboard.html";
-    return;
+  } else {
+    // ❌ Belum login → Tampil Landing Page
+    document.getElementById("app").innerHTML = `
+      <h1 style="text-transform: uppercase;">${config.APP} PORTAL</h1>
+      <p style="color:gray;">Welcome to Orland Management</p>
+      <button class="btn" onclick="window.location.href='${config.SSO_URL}'">Masuk / Daftar Akun</button>
+    `;
   }
-
-  // ❌ belum login → tampil landing
-  document.getElementById("app").innerHTML = `
-    <div style="text-align:center;margin-top:100px">
-      <h1>${portal.toUpperCase()} PORTAL</h1>
-      <p>Welcome to Orland Management</p>
-
-      <button onclick="login()">Login</button>
-      <button onclick="register()">Register</button>
-    </div>
-  `;
 }
-
-window.login = () => redirectToSSO(portal, "/");
-window.register = () => redirectToRegister(portal);
 
 init();
 </script>

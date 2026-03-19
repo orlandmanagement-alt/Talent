@@ -1,3 +1,4 @@
 export const state = {
-  user: null
+  user: null,
+  portal: location.hostname.includes("client") ? "client" : "talent"
 };

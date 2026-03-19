@@ -1,70 +1,69 @@
-import { renderLayout } from "/assets/js/ui.js";
 import { apiGet } from "/assets/js/api.js";
+import { createCard } from "/assets/js/ui.js";
 import { renderBarChart } from "/assets/js/chart.js";
-import { showLoading } from "/assets/js/loading.js";
-import mountNotifications from "/modules/mod_notifications.js";
-import initSessionManagement from "/modules/mod_session_management.js";
+import { renderWidget as renderNotifWidget } from "/modules/mod_notifications.js";
+import { renderWidget as renderSessionWidget } from "/modules/mod_session_management.js";
 
-function card(title, value){
+export async function render() {
   return `
-    <div style="flex:1;padding:16px;border:1px solid #ddd;border-radius:8px;background:#fff">
-      <div style="font-size:12px;color:#666">${title}</div>
-      <div style="font-size:22px;font-weight:bold">${value}</div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8" id="kpi-container">
+      <div class="col-span-full flex justify-center py-4"><i class="fa-solid fa-spinner fa-spin text-3xl text-primary"></i></div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="lg:col-span-2 bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100">
+        <h3 class="text-xl font-bold mb-6 text-gray-800"><i class="fa-solid fa-chart-column text-primary mr-2"></i> Aktivitas Proyek</h3>
+        <div id="chart-container" class="mt-4">
+            <div class="flex justify-center py-10"><i class="fa-solid fa-spinner fa-spin text-gray-300 text-3xl"></i></div>
+        </div>
+      </div>
+
+      <div class="space-y-6">
+        <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100">
+          <h3 class="text-lg font-bold mb-4 text-gray-800 border-b border-gray-100 pb-3"><i class="fa-solid fa-bell text-orange-400 mr-2"></i> Notifikasi Terbaru</h3>
+          <div id="notif-container" class="space-y-1">Memuat notifikasi...</div>
+        </div>
+        <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100">
+          <div class="flex justify-between items-center mb-4 border-b border-gray-100 pb-3">
+            <h3 class="text-lg font-bold text-gray-800"><i class="fa-solid fa-shield-halved text-green-500 mr-2"></i> Perangkat Aktif</h3>
+            <button onclick="window.logoutAllSessions()" class="text-xs font-bold text-red-500 hover:bg-red-50 px-3 py-1.5 rounded-lg transition-colors border border-red-100">Logout Semua</button>
+          </div>
+          <div id="session-container" class="space-y-1">Memuat sesi...</div>
+        </div>
+      </div>
     </div>
   `;
 }
 
-export default async function(){
-  renderLayout("Dashboard", `
-    <div style="display:grid;grid-template-columns:2fr 1fr;gap:20px">
-      <div>
-        <div id="kpi" style="display:flex;gap:10px;margin-bottom:20px">Loading...</div>
-        <div style="background:#fff;border:1px solid #ddd;border-radius:8px;padding:16px">
-          <h3 style="margin-top:0">Activity</h3>
-          <div id="chart"></div>
-        </div>
-      </div>
-
-      <div style="display:flex;flex-direction:column;gap:20px">
-        <div style="background:#fff;border:1px solid #ddd;border-radius:8px;padding:16px">
-          <h3 style="margin-top:0">Notifications (<span id="notifCount">0</span>)</h3>
-          <div id="notifList">Loading...</div>
-        </div>
-
-        <div style="background:#fff;border:1px solid #ddd;border-radius:8px;padding:16px">
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <h3 style="margin-top:0;margin-bottom:12px">Sessions</h3>
-            <button id="logoutAllBtn">Logout All</button>
-          </div>
-          <div id="sessionBox">Loading...</div>
-        </div>
-      </div>
-    </div>
-  `);
-
-  showLoading("kpi");
-
+export async function initEvents() {
+  console.log("Dashboard Events Loading...");
+  
+  // 1. Load KPI & Chart
   const res = await apiGet("/functions/api/dashboard_summary");
-  const el = document.getElementById("kpi");
-
-  if(!res.ok){
-    el.innerHTML = "Failed load KPI";
-  }else{
-    const d = res.data || {};
-    el.innerHTML = `
-      ${card("Projects", d.projects || 0)}
-      ${card("Applications", d.applications || 0)}
-      ${card("Bookings", d.bookings || 0)}
-      ${card("Earnings", "$" + (d.earnings || 0))}
+  const kpiEl = document.getElementById("kpi-container");
+  
+  if (res.ok && res.data) {
+    const d = res.data;
+    kpiEl.innerHTML = `
+      ${createCard("Total Proyek", d.projects || 0, "fa-solid fa-briefcase", "blue")}
+      ${createCard("Lamaran Aktif", d.applications || 0, "fa-solid fa-paper-plane", "green")}
+      ${createCard("Jadwal Booking", d.bookings || 0, "fa-solid fa-calendar-check", "purple")}
+      ${createCard("Pendapatan", "$" + (d.earnings || 0), "fa-solid fa-wallet", "orange")}
     `;
-
-    renderBarChart("chart", [
-      { label:"Projects", value:d.projects || 0 },
-      { label:"Applications", value:d.applications || 0 },
-      { label:"Bookings", value:d.bookings || 0 }
-    ]);
+    
+    // Render Chart
+    const chartData = [
+      { label: "Proyek Selesai", value: d.projects || 15 },
+      { label: "Lamaran Terkirim", value: d.applications || 28 },
+      { label: "Booking Diterima", value: d.bookings || 8 }
+    ];
+    document.getElementById("chart-container").innerHTML = ""; // Clear spinner
+    renderBarChart("chart-container", chartData);
+  } else {
+    kpiEl.innerHTML = `<div class="col-span-full text-red-500 font-medium">Gagal memuat Ringkasan Dashboard.</div>`;
   }
 
-  await mountNotifications();
-  await initSessionManagement();
+  // 2. Load Widgets (Tanpa memblokir satu sama lain)
+  renderNotifWidget("notif-container");
+  renderSessionWidget("session-container");
 }

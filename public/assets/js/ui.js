@@ -23,3 +23,33 @@ export function createAlert(message, type = "info") {
 export function createBadge(text, color = "gray") {
     return `<span class="px-3 py-1 bg-${color}-50 text-${color}-600 rounded-full text-xs font-bold uppercase tracking-wider">${text}</span>`;
 }
+
+// Helper Privasi
+export function maskPhone(phone) {
+    if (!phone || phone.length < 6) return phone || "-";
+    // 0812345****7 (Ambil depan, sensor 4 digit sebelum terakhir, ambil 1 digit terakhir)
+    return phone.slice(0, -5) + "****" + phone.slice(-1);
+}
+
+export function maskEmail(email) {
+    if (!email || !email.includes('@')) return email || "-";
+    const [name, domain] = email.split('@');
+    if (name.length <= 4) return name[0] + "***@" + domain;
+    // wrs*****6@gmail.com
+    return name.slice(0, 3) + "*****" + name.slice(-1) + "@" + domain;
+}
+
+// Helper Privasi
+export function maskPhone(phone) {
+    if (!phone || phone.length < 6) return phone || "-";
+    // 0812345****7 (Ambil depan, sensor 4 digit sebelum terakhir, ambil 1 digit terakhir)
+    return phone.slice(0, -5) + "****" + phone.slice(-1);
+}
+
+export function maskEmail(email) {
+    if (!email || !email.includes('@')) return email || "-";
+    const [name, domain] = email.split('@');
+    if (name.length <= 4) return name[0] + "***@" + domain;
+    // wrs*****6@gmail.com
+    return name.slice(0, 3) + "*****" + name.slice(-1) + "@" + domain;
+}

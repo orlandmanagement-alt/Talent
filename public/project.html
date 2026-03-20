@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Peluang Proyek - Orland Management</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script>tailwind.config = { theme: { extend: { fontFamily: { sans: ['Poppins', 'sans-serif'] }, colors: { primary: '#6b8aed' } } } }</script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans antialiased flex items-center justify-center min-h-screen p-4">
+
+  <div class="max-w-2xl w-full bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100 relative">
+      <div class="h-32 bg-primary flex items-center justify-center relative overflow-hidden">
+          <div class="absolute inset-0 bg-black opacity-10"></div>
+          <h1 class="text-3xl font-black text-white relative z-10 tracking-widest">ORLAND<span class="font-light">PROJECT</span></h1>
+      </div>
+      
+      <div class="p-8">
+          <div id="loading" class="flex flex-col items-center py-10"><i class="fa-solid fa-spinner fa-spin text-4xl text-primary mb-4"></i><p>Memuat Rincian Proyek...</p></div>
+          
+          <div id="content" class="hidden">
+              <div class="flex items-center gap-2 mb-2">
+                  <span class="px-3 py-1 bg-green-100 text-green-600 text-[10px] font-black rounded-full uppercase tracking-widest shadow-sm">Sedang Mencari Talent</span>
+              </div>
+              <h2 id="p-title" class="text-2xl font-bold text-gray-800 mb-1">Judul Proyek</h2>
+              <p class="text-sm font-bold text-primary mb-6"><i class="fa-regular fa-building mr-1"></i> <span id="p-company">Nama Perusahaan</span></p>
+
+              <div class="grid grid-cols-2 gap-4 mb-6 bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                  <div><p class="text-xs text-gray-500 font-bold uppercase">Lokasi</p><p id="p-loc" class="font-medium text-sm text-gray-800">TBA</p></div>
+                  <div><p class="text-xs text-gray-500 font-bold uppercase">Tanggal Event</p><p id="p-date" class="font-medium text-sm text-gray-800">TBA</p></div>
+              </div>
+
+              <h3 class="font-bold text-gray-800 mb-2">Deskripsi Proyek:</h3>
+              <p id="p-desc" class="text-gray-600 text-sm leading-relaxed mb-8 whitespace-pre-wrap">Deskripsi...</p>
+
+              <button onclick="handleApply()" class="w-full bg-primary text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:bg-blue-600 transition-all hover:-translate-y-1 active:scale-[0.98]">
+                  Lamar Proyek Ini Sekarang <i class="fa-solid fa-arrow-right ml-2"></i>
+              </button>
+          </div>
+      </div>
+  </div>
+
+  <script type="module">
+      import { checkSession } from "/assets/js/auth.js";
+      import config from "/assets/js/config.js";
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const projectId = urlParams.get('id');
+
+      async function loadProject() {
+          if (!projectId) { document.getElementById('loading').innerHTML = '<p class="text-red-500 font-bold">Link Tidak Valid.</p>'; return; }
+          
+          try {
+              const res = await fetch(`${config.API_BASE}/functions/api/public/project_detail?id=${projectId}`);
+              const data = await res.json();
+              if (data.status === 'ok' && data.data) {
+                  const p = data.data;
+                  document.getElementById('p-title').textContent = p.title;
+                  document.getElementById('p-company').textContent = p.company_name || 'Client Orland';
+                  document.getElementById('p-loc').textContent = p.location || 'TBA';
+                  document.getElementById('p-date').textContent = p.event_date || 'TBA';
+                  document.getElementById('p-desc').textContent = p.description || '-';
+                  
+                  document.getElementById('loading').style.display = 'none';
+                  document.getElementById('content').style.display = 'block';
+              } else {
+                  document.getElementById('loading').innerHTML = '<p class="text-red-500 font-bold">Proyek tidak ditemukan / sudah ditutup.</p>';
+              }
+          } catch (e) {
+              document.getElementById('loading').innerHTML = '<p class="text-red-500 font-bold">Gagal terhubung ke server.</p>';
+          }
+      }
+
+      window.handleApply = async function() {
+          // 1. Cek Sesi
+          const user = await checkSession();
+          
+          // 2. Simpan niat user ke memori lokal
+          localStorage.setItem('pending_apply_project', projectId);
+
+          if (user) {
+              // Jika sudah login, langsung lempar ke Dashboard (Interceptor akan menangkapnya)
+              window.location.href = '/dashboard.html';
+          } else {
+              // Jika belum login, lempar ke SSO (Setelah login/register sukses, SSO akan mengembalikan mereka ke talent portal)
+              window.location.href = config.SSO_URL;
+          }
+      }
+
+      loadProject();
+  </script>
+</body>
+</html>

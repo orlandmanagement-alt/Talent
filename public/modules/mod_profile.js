@@ -1,6 +1,8 @@
 import { apiGet, apiPost } from "/assets/js/api.js";
 import { notify } from "/assets/js/notify.js";
 import { state as globalState } from "/assets/js/state.js";
+import { maskPhone, maskEmail } from "/assets/js/ui.js";
+import { maskPhone, maskEmail } from "/assets/js/ui.js";
 
 // =========================================================
 // 1. TEMPLATE RENDER (HTML & CSS INJECTIONS)
@@ -141,7 +143,8 @@ export async function render() {
           <div class="titleWrap">
             <h1 id="headerName" style="cursor:pointer;" title="Klik untuk edit">Memuat Nama...</h1>
             <div class="subMeta">
-              <span id="headerProfession" class="font-bold text-primary">Memuat Profesi...</span>
+              <span class="bg-yellow-100 text-yellow-700 border border-yellow-200 px-3 py-1 rounded-full text-xs font-black shadow-sm"><i class="fa-solid fa-star"></i> <span id="headerRating">0</span> / 10.000</span>
+              <span id="headerProfession" class="font-bold text-primary ml-2">Memuat Profesi...</span>
             </div>
           </div>
         </div>
@@ -337,10 +340,11 @@ export async function initEvents() {
       // Header
       qs("headerName").textContent = currentState.full_name || "Nama Belum Diatur";
       qs("headerProfession").textContent = currentState.profession || "Kategori Belum Dipilih";
+      qs("headerRating").textContent = (res.data?.rating_score || 0).toLocaleString("id-ID");
       
       // Contacts
-      qs("txtPhone").textContent = currentState.contacts.phone || "-";
-      qs("txtEmail").textContent = currentState.contacts.email || "-";
+      qs("txtPhone").textContent = maskPhone(currentState.contacts.phone);
+      qs("txtEmail").textContent = maskEmail(currentState.contacts.email);
       
       // Personal
       qs("txtGender").textContent = currentState.personal.gender || "-";

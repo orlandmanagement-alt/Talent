@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Casting Kilat - Orland Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>tailwind.config = { theme: { extend: { colors: { primary: '#ef4444', dark: '#111827' }, fontFamily: { sans: ['Poppins', 'sans-serif'] } } } }</script>
+    <style>
+        body { background-color: #f3f4f6; }
+        /* Hilangkan panah pada input number */
+        input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    </style>
+</head>
+<body class="antialiased pb-10">
+
+    <div class="bg-primary text-white text-center py-4 rounded-b-3xl shadow-lg relative z-10">
+        <h1 class="font-black text-xl tracking-widest uppercase">PANGGILAN CASTING</h1>
+        <p class="text-xs font-semibold mt-1 opacity-90"><i class="fa-solid fa-bolt text-yellow-300"></i> Dibutuhkan Segera (Urgent)</p>
+    </div>
+
+    <div class="max-w-md mx-auto px-5 mt-6" id="form-container">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            
+            <p class="text-xs text-gray-500 text-center mb-6 border-b border-gray-100 pb-4">Silakan isi data diri Anda. Data ini akan langsung masuk ke meja Sutradara / Koordinator Lapangan.</p>
+
+            <form id="quickForm" class="space-y-5">
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 uppercase mb-2">Foto Wajah (Selfie Sekarang) <span class="text-red-500">*</span></label>
+                    <div class="relative w-full aspect-[3/4] bg-gray-100 rounded-xl border-2 border-dashed border-gray-300 flex flex-col items-center justify-center overflow-hidden cursor-pointer" onclick="document.getElementById('in_photo').click()" id="photo_preview_box">
+                        <i class="fa-solid fa-camera text-4xl text-gray-300 mb-2" id="photo_icon"></i>
+                        <p class="text-xs font-bold text-gray-400" id="photo_text">Ketuk untuk Foto</p>
+                        <img id="photo_preview" class="absolute inset-0 w-full h-full object-cover hidden">
+                    </div>
+                    <input type="file" id="in_photo" accept="image/*" capture="user" class="hidden">
+                    <input type="hidden" id="photo_base64">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 uppercase mb-2">Nama Lengkap / Panggilan <span class="text-red-500">*</span></label>
+                    <input type="text" id="in_name" required class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 font-bold text-gray-800 outline-none focus:border-primary" placeholder="Cth: Budi Santoso">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 uppercase mb-2">No. WhatsApp Aktif <span class="text-red-500">*</span></label>
+                    <input type="tel" id="in_phone" required class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 font-bold text-gray-800 outline-none focus:border-primary" placeholder="Cth: 08123456789">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-2">Gender</label>
+                        <select id="in_gender" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 font-bold text-gray-800 outline-none focus:border-primary">
+                            <option value="Pria">Pria</option>
+                            <option value="Wanita">Wanita</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-2">Usia</label>
+                        <div class="relative">
+                            <input type="number" id="in_age" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 font-bold text-gray-800 outline-none focus:border-primary" placeholder="0">
+                            <span class="absolute right-4 top-3 text-xs font-bold text-gray-400">Thn</span>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-2">Tinggi</label>
+                        <div class="relative">
+                            <input type="number" id="in_height" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 font-bold text-gray-800 outline-none focus:border-primary" placeholder="0">
+                            <span class="absolute right-4 top-3 text-xs font-bold text-gray-400">Cm</span>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-2">Berat</label>
+                        <div class="relative">
+                            <input type="number" id="in_weight" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 font-bold text-gray-800 outline-none focus:border-primary" placeholder="0">
+                            <span class="absolute right-4 top-3 text-xs font-bold text-gray-400">Kg</span>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" id="btn_submit" class="w-full bg-green-500 text-white font-black py-4 rounded-xl shadow-lg hover:bg-green-600 active:scale-95 transition-transform text-lg mt-4 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-check-double"></i> SAYA SIAP DATANG!
+                </button>
+            </form>
+        </div>
+        <div class="text-center mt-6">
+            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Powered by</p>
+            <h2 class="font-black text-gray-800 tracking-widest">ORLAND<span class="font-light text-primary">MGMT</span></h2>
+        </div>
+    </div>
+
+    <div class="max-w-md mx-auto px-5 mt-10 hidden text-center" id="success-screen">
+        <div class="w-24 h-24 bg-green-100 text-green-500 rounded-full flex items-center justify-center text-5xl mx-auto mb-6">
+            <i class="fa-solid fa-check"></i>
+        </div>
+        <h2 class="text-2xl font-black text-gray-800 mb-2">Data Terkirim!</h2>
+        <p class="text-sm text-gray-500 mb-8">Terima kasih. Jika Anda terpilih, koordinator kami akan segera menghubungi Anda via WhatsApp.</p>
+        <button onclick="window.location.reload()" class="text-sm font-bold text-primary hover:underline">Kirim data orang lain</button>
+    </div>
+
+    <script type="module">
+        import config from "./assets/js/config.js";
+
+        // Logic Kompresi Gambar agar DB tidak penuh
+        document.getElementById('in_photo').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    // Kompresi menggunakan Canvas (Maks lebar 400px agar ringan)
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 400;
+                    const scaleSize = MAX_WIDTH / img.width;
+                    canvas.width = MAX_WIDTH;
+                    canvas.height = img.height * scaleSize;
+
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                    // Konversi ke base64 JPEG kualitas 70%
+                    const base64Str = canvas.toDataURL('image/jpeg', 0.7);
+                    
+                    document.getElementById('photo_base64').value = base64Str;
+                    const preview = document.getElementById('photo_preview');
+                    preview.src = base64Str;
+                    preview.classList.remove('hidden');
+                    document.getElementById('photo_icon').classList.add('hidden');
+                    document.getElementById('photo_text').classList.add('hidden');
+                }
+                img.src = event.target.result;
+            }
+            reader.readAsDataURL(file);
+        });
+
+        // Submit Form
+        document.getElementById('quickForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const projectId = urlParams.get('pid') || 'PROJECT_URGENT_DEFAULT';
+            const categoryId = urlParams.get('cid') || 'EXTRAS_DEFAULT';
+            const photoData = document.getElementById('photo_base64').value;
+
+            if(!photoData) {
+                alert("Harap ketuk kotak foto untuk mengambil foto selfie Anda!");
+                return;
+            }
+
+            const payload = {
+                project_id: projectId,
+                category_id: categoryId,
+                name: document.getElementById('in_name').value,
+                phone: document.getElementById('in_phone').value,
+                gender: document.getElementById('in_gender').value,
+                age: document.getElementById('in_age').value,
+                height: document.getElementById('in_height').value,
+                weight: document.getElementById('in_weight').value,
+                photo_base64: photoData
+            };
+
+            const btn = document.getElementById('btn_submit');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Mengirim...';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch(`${config.API_BASE}/functions/api/public/quick_apply`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                const data = await res.json();
+                
+                if (res.ok) {
+                    document.getElementById('form-container').classList.add('hidden');
+                    document.getElementById('success-screen').classList.remove('hidden');
+                } else {
+                    alert(data.message || "Gagal mengirim data.");
+                    btn.innerHTML = '<i class="fa-solid fa-check-double"></i> SAYA SIAP DATANG!';
+                    btn.disabled = false;
+                }
+            } catch (err) {
+                alert("Terjadi kesalahan koneksi.");
+                btn.innerHTML = '<i class="fa-solid fa-check-double"></i> SAYA SIAP DATANG!';
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -129,7 +129,19 @@ export async function render() {
           </div>
         </div>
 
-        <div class="block-prof" id="contactsCard">
+        <div class="block-prof">
+            <button type="button" onclick="window.ProfileSync.openCompCard()" class="w-full bg-gray-900 text-white font-bold py-3 rounded-xl shadow-lg hover:bg-black transition-transform active:scale-95 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-id-badge text-yellow-400"></i> Lihat Comp Card
+            </button>
+        </div>
+
+        <div class="block-prof mt-3">
+            <button type="button" onclick="window.ProfileSync.shareLink()" class="w-full bg-white border-2 border-gray-200 text-gray-700 font-bold py-3 rounded-xl hover:bg-gray-50 transition-colors active:scale-95 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-share-nodes text-primary"></i> Salin Link Portofolio Publik
+            </button>
+        </div>
+
+  <div class="block-prof" id="contactsCard">
           <div class="rowHead"><h4 style="margin:0;">KONTAK</h4><button class="miniBtn" type="button" id="btnEditContacts">Edit</button></div>
           <div class="kv" id="contactView">
             <div class="item"><span>📞</span><span id="txtPhone">-</span></div>
@@ -164,7 +176,7 @@ export async function render() {
                 <input type="text" id="inpSkill" placeholder="Ketik keahlian (Cth: Akting, MC)..." class="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-primary">
                 <button type="button" class="bg-primary text-white px-4 rounded-lg text-sm font-bold" id="btnAddSkill">Tambah</button>
               </div>
-              <div class="chips" id="listSkills"></div>
+              <div class="chips" id="listSkills"></div><div class="mt-3 flex flex-wrap gap-2" id="skill-suggestions"></div>
             </div>
           </div>
 
@@ -233,7 +245,7 @@ export async function render() {
       <div class="modalBody">
         <div class="formGrid">
           <div class="frow"><label>Nama Lengkap</label><input id="nameFull" type="text"></div>
-          <div class="frow"><label>Kategori / Profesi Utama</label><input id="inpProfession" type="text" placeholder="Cth: Model / Aktor"></div>
+          <div class="frow"><label>Kategori / Profesi Utama</label><select id="inpProfession" class="w-full border border-gray-300 rounded-xl p-3 focus:border-primary outline-none text-sm"><option value="">Memuat Profesi...</option></select></div>
         </div>
         <div style="display:flex;gap:10px;margin-top:16px;">
           <button class="bg-primary text-white px-5 py-2 rounded-lg font-bold" onclick="window.ProfileSync.applyName()">Terapkan</button>
@@ -289,6 +301,22 @@ export async function initEvents() {
     skills: [],
     photos: { headshot: "", side: "", full: "" } // Nantinya ini berisi URL Cloud
   };
+
+    // FETCH MASTER DATA UNTUK DROPDOWN
+    apiGet("/functions/api/public/master_data").then(res => {
+        if(res.ok && res.data) {
+            const profSelect = document.getElementById("inpProfession");
+            if(profSelect && res.data.profession) {
+                profSelect.innerHTML = `<option value="">-- Pilih Profesi Utama --</option>` + res.data.profession.map(p => `<option value="${p}">${p}</option>`).join("");
+                profSelect.value = currentState.profession || "";
+            }
+            // Render Skills Suggestions
+            const skillSugg = document.getElementById("skill-suggestions");
+            if(skillSugg && res.data.skill) {
+                skillSugg.innerHTML = res.data.skill.map(s => `<button type="button" class="text-xs bg-gray-100 px-2 py-1 rounded hover:bg-primary hover:text-white" onclick="document.getElementById('inpSkill').value='${s}'; document.getElementById('btnAddSkill').click();">${s}</button>`).join("");
+            }
+        }
+    });
 
   let originalState = {};
   let currentState = {};
@@ -482,6 +510,73 @@ export async function initEvents() {
           currentState = JSON.parse(JSON.stringify(originalState));
           renderAll(); checkDirty();
       },
+        
+        shareLink: async () => {
+            try {
+                const { state } = await import("/assets/js/state.js");
+                if(state && state.user && state.user.id) {
+                    const link = window.location.origin + '/p.html?id=' + state.user.id;
+                    await navigator.clipboard.writeText(link);
+                    notify("Link Portofolio Publik berhasil disalin! Silakan paste di Bio IG Anda.", "success");
+                } else {
+                    notify("ID Pengguna tidak ditemukan.", "error");
+                }
+            } catch(e) { notify("Gagal menyalin link.", "error"); }
+        },
+        openCompCard: () => {
+
+            if (!currentState.photos.headshot) return notify("Anda wajib mengunggah Foto Profil (Headshot) terlebih dahulu!", "error");
+            
+            const qsCC = (id) => document.getElementById(id);
+            qsCC("cc_name").textContent = currentState.full_name || "Nama Talent";
+            qsCC("cc_profession").textContent = currentState.profession || "UNCATEGORIZED";
+            qsCC("cc_height").textContent = currentState.personal.height ? currentState.personal.height + " cm" : "-";
+            qsCC("cc_gender").textContent = currentState.personal.gender || "-";
+            qsCC("cc_loc").textContent = currentState.personal.loc || "-";
+            qsCC("cc_dob").textContent = currentState.personal.dob || "-";
+            
+            qsCC("cc_main_photo").style.backgroundImage = `url('${currentState.photos.headshot}')`;
+            qsCC("cc_side_photo").style.backgroundImage = currentState.photos.side ? `url('${currentState.photos.side}')` : "none";
+            qsCC("cc_full_photo").style.backgroundImage = currentState.photos.full ? `url('${currentState.photos.full}')` : "none";
+            
+            const skillHtml = (currentState.skills || []).map(s => `<span class="bg-gray-800 text-white px-2 py-1 rounded text-[9px] font-bold uppercase tracking-wider">${s}</span>`).join("");
+            qsCC("cc_skills").innerHTML = skillHtml || `<span class="text-xs text-gray-400">-</span>`;
+            
+            qs("modalCompCard").hidden = false;
+        },
+        downloadCompCard: async (type) => {
+            notify("Menyiapkan " + type.toUpperCase() + "...", "info");
+            const element = document.getElementById("comp-card-export-area");
+            const fileName = `CompCard_${(currentState.full_name || "Talent").replace(/\s+/g, "_")}`;
+            
+            try {
+                if (type === "jpg" || type === "png") {
+                    if (!window.html2canvas) {
+                        await new Promise(r => { const s = document.createElement("script"); s.src = "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"; s.onload = r; document.head.appendChild(s); });
+                    }
+                    const canvas = await html2canvas(element, { scale: 2, useCORS: true, backgroundColor: "#ffffff" });
+                    const link = document.createElement("a");
+                    link.download = fileName + "." + type;
+                    link.href = canvas.toDataURL(`image/${type === "jpg" ? "jpeg" : "png"}`, 0.95);
+                    link.click();
+                    notify("Berhasil diunduh!", "success");
+                } else if (type === "pdf") {
+                    if (!window.html2pdf) {
+                        await new Promise(r => { const s = document.createElement("script"); s.src = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"; s.onload = r; document.head.appendChild(s); });
+                    }
+                    const opt = {
+                        margin: 0,
+                        filename: fileName + ".pdf",
+                        image: { type: "jpeg", quality: 0.98 },
+                        html2canvas: { scale: 2, useCORS: true, letterRendering: true },
+                        jsPDF: { unit: "in", format: "letter", orientation: "portrait" }
+                    };
+                    html2pdf().set(opt).from(element).save().then(() => notify("PDF Berhasil diunduh!", "success"));
+                }
+            } catch(e) {
+                notify("Terjadi kesalahan saat membuat file.", "error");
+            }
+        },
       saveToApi: async () => {
           notify("Menyimpan ke database...", "info");
           // Eksekusi API POST (Kirim currentState)

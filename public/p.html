@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Talent Portfolio - Orland Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = { theme: { extend: { colors: { primary: '#fbbf24', dark: '#111827' }, fontFamily: { sans: ['Open Sans', 'sans-serif'], display: ['Montserrat', 'sans-serif'] } } } }
+    </script>
+    <style>
+        .glass-panel { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); }
+        .hero-pattern { background-image: radial-gradient(#fbbf24 1px, transparent 1px); background-size: 20px 20px; opacity: 0.1; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased min-h-screen flex flex-col">
+
+    <header class="bg-dark text-white p-4 sticky top-0 z-50 shadow-lg">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <h1 class="font-display font-black text-xl tracking-widest">ORLAND<span class="font-light text-primary">MGMT</span></h1>
+            <a href="https://client.orlandmanagement.com" class="text-[10px] md:text-xs font-bold uppercase tracking-wider border border-white/20 px-3 py-1.5 rounded hover:bg-white/10 transition">Hire Talent</a>
+        </div>
+    </header>
+
+    <main class="flex-1 w-full max-w-4xl mx-auto p-4 md:p-8" id="profile-container">
+        <div class="py-20 text-center"><i class="fa-solid fa-spinner fa-spin text-4xl text-primary"></i><p class="mt-4 font-bold text-gray-400 uppercase tracking-widest text-sm">Memuat Portofolio...</p></div>
+    </main>
+
+    <footer class="bg-dark text-gray-400 text-center py-6 text-xs border-t border-white/10">
+        <p>Verified Talent at <strong class="text-white">Orland Management</strong> &copy; 2026</p>
+    </footer>
+
+    <script type="module">
+        import config from "./assets/js/config.js";
+
+        async function init() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const talentId = urlParams.get('id');
+            const container = document.getElementById('profile-container');
+
+            if (!talentId) {
+                container.innerHTML = `<div class="bg-red-50 text-red-600 p-6 rounded-2xl text-center border border-red-200"><i class="fa-solid fa-triangle-exclamation text-4xl mb-3"></i><h2 class="font-bold text-xl">Profil Tidak Ditemukan</h2><p class="text-sm">Link portofolio tidak valid atau rusak.</p></div>`;
+                return;
+            }
+
+            try {
+                const res = await fetch(`${config.API_BASE}/functions/api/public/talent_profile?id=${talentId}`);
+                const data = await res.json();
+
+                if (!res.ok) throw new Error(data.message || "Gagal memuat profil");
+
+                const p = data.data;
+                const headshot = p.photos.headshot || 'https://via.placeholder.com/600x800?text=No+Photo';
+                const sidePhoto = p.photos.side || '';
+                const fullPhoto = p.photos.full || '';
+                const skillsHtml = p.skills && p.skills.length > 0 
+                    ? p.skills.map(s => `<span class="bg-gray-100 text-gray-700 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider">${s}</span>`).join('') 
+                    : '<span class="text-gray-400 text-xs italic">Belum ada data keahlian</span>';
+
+                let galleryHtml = '';
+                if(sidePhoto || fullPhoto) {
+                    galleryHtml = `
+                    <div class="mt-8">
+                        <h3 class="font-display font-black text-sm text-gray-400 uppercase tracking-widest mb-4 border-b border-gray-200 pb-2">Galeri Tambahan</h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            ${sidePhoto ? `<div class="aspect-[3/4] bg-gray-200 rounded-2xl bg-cover bg-center shadow-inner" style="background-image: url('${sidePhoto}')"></div>` : ''}
+                            ${fullPhoto ? `<div class="aspect-[3/4] bg-gray-200 rounded-2xl bg-cover bg-center shadow-inner" style="background-image: url('${fullPhoto}')"></div>` : ''}
+                        </div>
+                    </div>`;
+                }
+
+                container.innerHTML = `
+                    <div class="bg-white rounded-[2rem] shadow-xl overflow-hidden border border-gray-100 relative">
+                        <div class="absolute inset-0 hero-pattern pointer-events-none"></div>
+                        
+                        <div class="flex flex-col md:flex-row relative z-10">
+                            <div class="w-full md:w-5/12 aspect-[3/4] md:aspect-auto bg-gray-200 bg-cover bg-center relative" style="background-image: url('${headshot}')">
+                                <div class="absolute inset-0 bg-gradient-to-t from-dark/90 via-dark/20 to-transparent"></div>
+                                <div class="absolute bottom-6 left-6 right-6 text-white">
+                                    <p class="text-primary font-bold text-xs uppercase tracking-widest mb-1 drop-shadow-md">${p.profession}</p>
+                                    <h2 class="font-display font-black text-3xl leading-none drop-shadow-lg">${p.name}</h2>
+                                </div>
+                            </div>
+
+                            <div class="w-full md:w-7/12 p-6 md:p-10 bg-white/80 glass-panel flex flex-col justify-center">
+                                
+                                <div class="flex flex-wrap gap-4 mb-8">
+                                    <div class="text-center px-4 py-2 bg-gray-50 rounded-xl border border-gray-100 min-w-[80px]">
+                                        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Height</p>
+                                        <p class="font-black text-dark text-lg">${p.height} <span class="text-xs font-normal">cm</span></p>
+                                    </div>
+                                    <div class="text-center px-4 py-2 bg-gray-50 rounded-xl border border-gray-100 min-w-[80px]">
+                                        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Location</p>
+                                        <p class="font-black text-dark text-lg capitalize">${p.city}</p>
+                                    </div>
+                                    <div class="text-center px-4 py-2 bg-gray-50 rounded-xl border border-gray-100 min-w-[80px]">
+                                        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Gender</p>
+                                        <p class="font-black text-dark text-lg capitalize">${p.gender}</p>
+                                    </div>
+                                </div>
+
+                                <div class="mb-8">
+                                    <h3 class="font-display font-black text-sm text-gray-400 uppercase tracking-widest mb-3 border-b border-gray-200 pb-2">Tentang Talent</h3>
+                                    <p class="text-gray-600 text-sm leading-relaxed">${p.bio || '<i class="text-gray-400">Tidak ada deskripsi.</i>'}</p>
+                                </div>
+
+                                <div>
+                                    <h3 class="font-display font-black text-sm text-gray-400 uppercase tracking-widest mb-3 border-b border-gray-200 pb-2">Keahlian Khusus</h3>
+                                    <div class="flex flex-wrap gap-2">${skillsHtml}</div>
+                                </div>
+
+                                ${galleryHtml}
+
+                                <div class="mt-10 pt-6 border-t border-gray-200 flex flex-col sm:flex-row gap-3">
+                                    <a href="https://client.orlandmanagement.com" class="flex-1 bg-dark text-white text-center py-4 rounded-xl font-black text-sm hover:bg-black shadow-lg transition-transform active:scale-95"><i class="fa-solid fa-briefcase mr-2 text-primary"></i> Hubungi via Orland Client</a>
+                                    <button onclick="navigator.clipboard.writeText(window.location.href); alert('Link Portofolio berhasil disalin!');" class="w-full sm:w-16 bg-gray-100 text-gray-600 py-4 rounded-xl font-bold flex items-center justify-center hover:bg-gray-200 transition-colors"><i class="fa-solid fa-share-nodes"></i></button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } catch (err) {
+                container.innerHTML = `<div class="bg-red-50 text-red-600 p-6 rounded-2xl text-center border border-red-200"><i class="fa-solid fa-triangle-exclamation text-4xl mb-3"></i><h2 class="font-bold text-xl">Koneksi Terputus</h2><p class="text-sm">Gagal terhubung ke server Orland Management.</p></div>`;
+            }
+        }
+        init();
+    </script>
+</body>
+</html>

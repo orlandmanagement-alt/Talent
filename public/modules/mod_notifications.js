@@ -1,69 +1,56 @@
 import { apiGet } from "/assets/js/api.js";
-import { notify } from "/assets/js/notify.js";
-import { startPolling, stopPolling } from "/assets/js/realtime.js";
 
-let lastCount = 0;
-
-// Fungsi Inti Penarik Data
-async function fetchNotifications(containerId, limit = null) {
-    const res = await apiGet("/functions/api/notifications");
-    const el = document.getElementById(containerId);
-    if (!el) return;
-
-    if (!res.ok) { 
-        if(!el.innerHTML.includes("Gagal")) el.innerHTML = `<div class="bg-red-50 text-red-500 p-4 rounded-xl text-center text-sm font-medium">Sistem Notifikasi Offline.</div>`; 
-        return; 
-    }
-    
-    let items = res.data?.items || res.data || [];
-    const count = Array.isArray(items) ? items.length : 0;
-
-    // Bunyikan Toast jika ada notif baru masuk saat polling berjalan
-    if (lastCount !== 0 && count > lastCount) {
-        notify("Anda memiliki notifikasi baru!", "info");
-    }
-    lastCount = count;
-
-    if (!count) { 
-        el.innerHTML = `<div class="text-center text-gray-400 py-6"><i class="fa-regular fa-bell-slash text-3xl mb-2 opacity-50"></i><p class="text-sm">Tidak ada notifikasi.</p></div>`; 
-        return; 
-    }
-    
-    if (limit) items = items.slice(0, limit);
-
-    el.innerHTML = items.map(x => `
-        <div class="p-3 border-b border-gray-100 hover:bg-gray-50 transition-colors flex gap-3 items-start last:border-0 rounded cursor-pointer">
-            <div class="w-8 h-8 rounded-full bg-blue-50 text-primary flex items-center justify-center flex-shrink-0 mt-0.5"><i class="fa-solid fa-envelope text-xs"></i></div>
-            <div>
-                <div class="font-bold text-gray-800 text-sm">${x.title || x.type || "Info Sistem"}</div>
-                <div class="text-xs text-gray-500 mt-1 line-clamp-2">${x.body || ""}</div>
-            </div>
-        </div>
-    `).join("");
-}
-
-// --- MODE: HALAMAN PENUH ---
 export async function render() {
-  return `
-    <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100 max-w-4xl mx-auto min-h-[60vh]">
-        <h2 class="text-2xl font-bold text-gray-800 mb-6 border-b border-gray-100 pb-4"><i class="fa-solid fa-bell text-primary mr-2"></i> Kotak Masuk Notifikasi</h2>
-        <div id="full-notif-list" class="space-y-1">
-            <div class="flex justify-center py-10"><i class="fa-solid fa-spinner fa-spin text-3xl text-primary"></i></div>
+    return `
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 min-h-[75vh]">
+        <div class="flex items-center justify-between border-b border-gray-100 pb-4 mb-6">
+            <h2 class="text-xl font-bold text-gray-800"><i class="fa-solid fa-bell text-blue-500 mr-2"></i> Kotak Masuk</h2>
+            <button class="text-[12px] font-bold text-blue-600 hover:underline">Tandai semua dibaca</button>
+        </div>
+        <div id="notif-container" class="space-y-3">
+            <div class="py-20 text-center"><i class="fa-solid fa-spinner fa-spin text-3xl text-gray-300"></i></div>
         </div>
     </div>
-  `;
+    `;
 }
 
 export async function initEvents() {
-  // Tarik data setiap 15 detik untuk halaman penuh
-  startPolling(() => fetchNotifications("full-notif-list"), 15000);
-}
+    const container = document.getElementById('notif-container');
+    try {
+        const res = await apiGet("/api/notifications");
+        
+        // GRACEFUL EMPTY STATE: Jika error / kosong, jangan tampilkan tulisan "Sistem Offline"
+        if (!res.ok || !res.data || res.data.length === 0 || res.data.items?.length === 0) {
+            container.innerHTML = `
+                <div class="flex flex-col items-center justify-center py-20 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
+                    <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mb-4">
+                        <i class="fa-regular fa-bell-slash text-3xl text-gray-300"></i>
+                    </div>
+                    <h3 class="text-[14px] font-bold text-gray-700">Belum Ada Notifikasi</h3>
+                    <p class="text-[12px] text-gray-500 mt-1">Kotak masuk Anda masih kosong.</p>
+                </div>
+            `;
+            return;
+        }
 
-// --- MODE: WIDGET UNTUK DASHBOARD ---
-export async function renderWidget(containerId) {
-  // Tarik data setiap 30 detik untuk widget dashboard (maksimal 4 notif)
-  startPolling(() => fetchNotifications(containerId, 4), 30000);
-}
+        const items = res.data.items || res.data;
+        container.innerHTML = items.map(n => `
+            <div class="p-4 border border-gray-100 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer flex gap-4 items-start">
+                <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-info"></i></div>
+                <div>
+                    <h4 class="text-[13px] font-bold text-gray-800">${n.title || 'Informasi'}</h4>
+                    <p class="text-[12px] text-gray-500 mt-0.5">${n.message || n.body || ''}</p>
+                    <span class="text-[10px] text-gray-400 font-bold mt-2 block">${new Date(n.created_at || Date.now()).toLocaleDateString('id-ID')}</span>
+                </div>
+            </div>
+        `).join('');
 
-// Bersihkan polling saat modul diganti agar memori tidak bocor
-window.addEventListener("hashchange", stopPolling); 
+    } catch(e) {
+        container.innerHTML = `
+            <div class="flex flex-col items-center justify-center py-20 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
+                <i class="fa-regular fa-bell-slash text-4xl text-gray-300 mb-3"></i>
+                <h3 class="text-[14px] font-bold text-gray-700">Tidak Ada Pemberitahuan</h3>
+            </div>
+        `;
+    }
+}

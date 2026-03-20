@@ -1,45 +1,23 @@
-import { apiGet, apiPost } from "/assets/js/api.js";
-import { notify } from "/assets/js/notify.js";
-import config from "/assets/js/config.js";
+import { apiPost } from "/assets/js/api.js";
 
-// Digunakan sebagai Widget di Dashboard
-export async function renderWidget(containerId) {
-  const el = document.getElementById(containerId);
-  if(!el) return;
-  
-  const res = await apiGet("/functions/api/auth/sessions");
-  if(!res.ok) { el.innerHTML = "<p class='text-red-500 text-sm'>Gagal memuat sesi.</p>"; return; }
-  
-  const items = res.data?.items || res.data || [];
-  if(!items.length) { el.innerHTML = "<p class='text-gray-400 italic text-sm'>Tidak ada sesi tambahan.</p>"; return; }
-
-  el.innerHTML = items.map((item, idx) => `
-    <div class="border-b border-gray-100 py-3 last:border-0 flex justify-between items-center hover:bg-gray-50 px-2 rounded -mx-2 transition-colors">
-        <div>
-            <div class="font-semibold text-gray-800 text-sm flex items-center gap-2">
-                <i class="fa-solid ${idx === 0 ? 'fa-laptop text-primary' : 'fa-mobile-screen text-gray-400'}"></i>
-                ${item.device_info || item.device_name || (idx === 0 ? "Perangkat Saat Ini" : "Perangkat Lain")}
+export async function render() {
+    return `
+    <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100 max-w-2xl mx-auto min-h-[60vh]">
+        <h2 class="text-xl font-bold text-gray-800 mb-2"><i class="fa-solid fa-shield-halved text-green-500 mr-2"></i> Keamanan Akun</h2>
+        <p class="text-sm text-gray-500 mb-8 border-b border-gray-100 pb-6">Kelola kata sandi dan pengaturan keamanan sesi Anda di sini.</p>
+        
+        <div class="space-y-4">
+            <div>
+                <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Kata Sandi Baru</label>
+                <input type="password" id="sec_new_pw" class="w-full border border-gray-200 rounded-lg py-2.5 px-3 focus:border-gray-800 outline-none text-sm bg-gray-50 focus:bg-white">
             </div>
-            <div class="text-xs text-gray-500 mt-1">Berakhir: ${item.expires_at || "Sesi Panjang"}</div>
+            <div>
+                <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Konfirmasi Kata Sandi</label>
+                <input type="password" id="sec_conf_pw" class="w-full border border-gray-200 rounded-lg py-2.5 px-3 focus:border-gray-800 outline-none text-sm bg-gray-50 focus:bg-white">
+            </div>
+            <button onclick="alert('Fitur pembaruan kata sandi sedang dalam penyesuaian API.')" class="w-full bg-gray-900 text-white font-bold py-3 rounded-lg text-[13px] hover:bg-black transition-colors mt-4">Perbarui Kata Sandi</button>
         </div>
-        ${idx !== 0 ? `<button onclick="window.revokeDeviceSession('${item.id || item.session_id}')" class="text-xs font-semibold text-red-500 hover:bg-red-50 px-3 py-1.5 rounded-lg border border-red-100 transition-colors">Cabut</button>` : `<span class="text-xs font-bold text-green-500 bg-green-50 px-2 py-1 rounded">Aktif</span>`}
     </div>
-  `).join("");
+    `;
 }
-
-// Global Function untuk aksi dari HTML
-window.revokeDeviceSession = async function(id) {
-    const res = await apiPost("/functions/api/auth/revoke_session", { session_id: id });
-    if(res.ok) {
-        notify("Sesi perangkat berhasil dicabut.", "success");
-        renderWidget("session-container"); // Reload list
-    } else { notify("Gagal mencabut sesi.", "error"); }
-}
-
-window.logoutAllSessions = async function() {
-    const res = await apiPost("/functions/api/auth/logout_all", {});
-    if(res.ok) {
-        notify("Semua sesi diakhiri. Mengalihkan...", "success");
-        setTimeout(() => window.location.href = config.SSO_URL, 1500);
-    } else { notify("Gagal logout dari perangkat lain.", "error"); }
-}
+export async function initEvents() {}

@@ -2,12 +2,15 @@ import config from "./config.js";
 
 export async function checkSession() {
     try {
-        // Tembak ke SSO_URL, bukan API_BASE, karena fungsi 'me' ada di appsso
-        const res = await fetch(`${config.SSO_URL}/api/auth/me`, { 
+        // PERBAIKAN: Di Cloudflare Pages, folder 'functions/api' diakses via '/api' (tanpa 'functions')
+        const endpoint = `${config.API_BASE}/api/auth/me`;
+
+        const res = await fetch(endpoint, { 
             method: 'GET',
             credentials: 'include',
             headers: { 'Accept': 'application/json' }
         });
+        
         if (!res.ok) return null;
         const data = await res.json();
         return data.user || null;

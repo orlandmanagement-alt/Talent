@@ -11,11 +11,22 @@
         tailwind.config = { theme: { extend: { colors: { primary: '#6b8aed' }, fontFamily: { sans: ['Poppins', 'sans-serif'] } } } }
     </script>
 </head>
-<body class="bg-gray-50 text-gray-800 antialiased">
+<body class="bg-gray-50 text-gray-800 antialiased overflow-x-hidden">
 
     <div id="global-loader" class="fixed inset-0 bg-white z-[100] flex flex-col items-center justify-center transition-opacity duration-500">
         <div class="w-12 h-12 border-4 border-blue-100 border-t-primary rounded-full animate-spin mb-4"></div>
-        <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] animate-pulse">O R L A N D • T A L E N T</p>
+        <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] animate-pulse">MEMUAT RUANG KERJA</p>
+    </div>
+
+    <div id="auth-overlay" class="fixed inset-0 bg-gray-900/95 backdrop-blur-sm z-[110] hidden items-center justify-center p-4">
+        <div class="bg-white p-8 rounded-3xl shadow-2xl max-w-sm w-full text-center border-2 border-red-100 transform scale-100 transition-transform">
+            <div class="w-20 h-20 bg-red-50 text-red-500 rounded-2xl flex items-center justify-center text-4xl mx-auto mb-6">
+                <i class="fa-solid fa-lock"></i>
+            </div>
+            <h2 class="text-2xl font-black text-gray-800 mb-2">Akses Terkunci</h2>
+            <p id="auth-error-msg" class="text-sm text-gray-500 mb-8">Sesi Anda telah habis atau Anda belum masuk. Silakan verifikasi identitas Anda.</p>
+            <button onclick="window.location.href='https://sso.orlandmanagement.com/?redirect=talent'" class="w-full bg-primary text-white font-black py-4 rounded-xl shadow-lg hover:bg-blue-600 active:scale-95 transition-all">Masuk via Orland SSO</button>
+        </div>
     </div>
 
     <div id="app-shell" class="flex min-h-screen hidden">
@@ -48,14 +59,9 @@
                     <i class="fa-solid fa-shield-halved w-5 text-center"></i> Keamanan Akun
                 </a>
             </nav>
-            <div class="p-4 border-t border-gray-100">
-                <button onclick="logout()" class="flex items-center justify-center gap-2 p-3 w-full bg-red-50 text-red-600 hover:bg-red-100 rounded-xl transition-all font-black uppercase text-xs tracking-widest">
-                    <i class="fa-solid fa-power-off"></i> Logout
-                </button>
-            </div>
         </aside>
 
-        <main class="flex-1 lg:ml-64 flex flex-col min-h-screen relative">
+        <main class="flex-1 lg:ml-64 flex flex-col min-h-screen relative w-full">
             
             <header class="bg-white/90 backdrop-blur-md border-b border-gray-200 p-4 flex items-center justify-between sticky top-0 z-40">
                 <div class="flex items-center gap-3">
@@ -73,7 +79,7 @@
                         </button>
                         <div id="drop-notif" class="hidden absolute right-0 mt-3 w-72 sm:w-80 bg-white border border-gray-100 rounded-2xl shadow-xl overflow-hidden flex flex-col z-50 transform origin-top-right transition-all">
                             <div class="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-                                <span class="font-black text-sm text-gray-800">Notifikasi</span>
+                                <span class="font-black text-sm text-gray-800">Notifikasi Terbaru</span>
                             </div>
                             <div id="list-notif" class="max-h-64 overflow-y-auto p-2">
                                 <div class="text-center text-xs text-gray-400 py-6 font-bold">Belum ada notifikasi.</div>
@@ -118,7 +124,7 @@
                 </div>
             </header>
 
-            <div id="main-content" class="p-4 md:p-8 max-w-7xl mx-auto w-full flex-1"></div>
+            <div id="main-content" class="p-4 md:p-8 w-full flex-1"></div>
         </main>
     </div>
 
@@ -133,29 +139,38 @@
         async function init() {
             const loader = document.getElementById('global-loader');
             const shell = document.getElementById('app-shell');
+            const overlay = document.getElementById('auth-overlay');
 
             try {
                 const user = await checkSession();
                 
                 if (user && user.role === 'talent') {
+                    // Update Dropdown Identitas
                     document.getElementById('dd-name').textContent = user.full_name || 'Talent Orland';
                     document.getElementById('dd-email').textContent = user.email || '';
                     const initial = (user.full_name || 'T').charAt(0).toUpperCase();
                     document.getElementById('avatar-initial').textContent = initial;
                     document.getElementById('dd-avatar').textContent = initial;
 
-                    loader.classList.add('opacity-0');
-                    setTimeout(() => {
-                        loader.classList.add('hidden');
-                        shell.classList.remove('hidden');
-                        loadModule('dashboard'); 
-                        fetchNotifications();
-                    }, 500);
+                    // Buka Tirai
+                    loader.classList.add('hidden');
+                    shell.classList.remove('hidden');
+                    
+                    // Render Dashboard & Notif
+                    loadModule('dashboard'); 
+                    fetchNotifications();
                 } else {
-                    window.location.href = `${config.SSO_URL}/?redirect=talent`;
+                    // MUNCULKAN POPUP MANUAL (ANTI INFINITE LOOP)
+                    loader.classList.add('hidden');
+                    overlay.classList.remove('hidden');
+                    overlay.classList.add('flex');
+                    if(user) document.getElementById('auth-error-msg').textContent = `Anda login sebagai ${user.role.toUpperCase()}. Gunakan akun Talent.`;
                 }
             } catch (e) {
-                window.location.href = `${config.SSO_URL}/?redirect=talent`;
+                console.error("Kesalahan init:", e);
+                loader.classList.add('hidden');
+                overlay.classList.remove('hidden');
+                overlay.classList.add('flex');
             }
         }
 
@@ -175,7 +190,8 @@
             } catch(e) {}
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
+        // PENGIKAT EVENT UI (Berjalan Langsung Tanpa Menunggu DOMContentLoaded)
+        const bindEvents = () => {
             const btnMenu = document.getElementById('mobile-menu-btn');
             const sidebar = document.getElementById('sidebar');
             const btnNotif = document.getElementById('btn-notif');
@@ -184,8 +200,18 @@
             const dropProfile = document.getElementById('drop-profile');
 
             btnMenu?.addEventListener('click', (e) => { e.stopPropagation(); sidebar.classList.toggle('-translate-x-full'); });
-            btnNotif?.addEventListener('click', (e) => { e.stopPropagation(); dropNotif.classList.toggle('hidden'); dropProfile.classList.add('hidden'); });
-            btnProfile?.addEventListener('click', (e) => { e.stopPropagation(); dropProfile.classList.toggle('hidden'); dropNotif.classList.add('hidden'); });
+            
+            btnNotif?.addEventListener('click', (e) => { 
+                e.stopPropagation(); 
+                dropNotif.classList.toggle('hidden'); 
+                dropProfile.classList.add('hidden'); 
+            });
+            
+            btnProfile?.addEventListener('click', (e) => { 
+                e.stopPropagation(); 
+                dropProfile.classList.toggle('hidden'); 
+                dropNotif.classList.add('hidden'); 
+            });
 
             document.addEventListener('click', (e) => {
                 if(!dropNotif.contains(e.target)) dropNotif.classList.add('hidden');
@@ -194,8 +220,9 @@
                     sidebar.classList.add('-translate-x-full');
                 }
             });
-        });
+        };
 
+        bindEvents();
         init();
     </script>
 </body>

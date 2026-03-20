@@ -460,6 +460,18 @@ export async function render() {
       <div class="modalBackdrop" onclick="ProfileApp.Modals.close('modalName')"></div>
       <div class="modalCard" style="max-width:520px;"><div class="modalHead"><h3>Edit Name</h3><button class="modalClose" type="button" onclick="ProfileApp.Modals.close('modalName')">×</button></div><div class="modalBody"><div class="formGrid"><div class="frow"><label>First name</label><input id="nameFirst" type="text" placeholder="First name"></div><div class="frow"><label>Last name</label><input id="nameLast" type="text" placeholder="Last name"></div></div><div style="display:flex;gap:10px;margin-top:12px;"><button class="pill-save" type="button" onclick="ProfileAppName.save()">Save</button><button class="pill-cancel" type="button" onclick="ProfileApp.Modals.close('modalName')">Cancel</button></div></div></div>
     </div>
+  
+    <div id="floatingSaveBar" class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-200 p-4 flex justify-between items-center gap-4 z-[9000] transform translate-y-full transition-transform duration-300 shadow-[0_-10px_20px_rgba(0,0,0,0.05)] lg:ml-64">
+      <div class="flex items-center gap-2 text-sm font-bold text-orange-600">
+        <i class="fa-solid fa-circle-exclamation text-lg animate-pulse"></i>
+        <span class="hidden sm:inline">Ada perubahan yang belum disimpan</span>
+        <span class="sm:hidden">Belum disimpan</span>
+      </div>
+      <div class="flex gap-2">
+        <button class="px-4 py-2.5 rounded-xl bg-gray-100 text-gray-700 font-bold text-[13px] hover:bg-gray-200 transition-colors" onclick="window.ProfileAppLogic.revert()">Batal</button>
+        <button class="px-6 py-2.5 rounded-xl bg-[#7c3aed] text-white font-black text-[13px] shadow-lg hover:bg-purple-700 transition-colors flex items-center gap-2" onclick="window.ProfileAppLogic.saveToApi()" id="btnSaveApi"><i class="fa-solid fa-cloud-arrow-up"></i> Simpan</button>
+      </div>
+    </div>
   </div>
   `;
 }
@@ -489,33 +501,47 @@ export async function initEvents() {
     let state = JSON.parse(JSON.stringify(DEFAULT));
 
     // INTEGRASI API - Fungsi Load
+    
+    let originalState = {};
+    let isDirty = false;
+
+    function checkDirty() {
+        if(JSON.stringify(originalState) !== JSON.stringify(state)) {
+            isDirty = true;
+            document.getElementById('floatingSaveBar')?.classList.remove('translate-y-full');
+        } else {
+            isDirty = false;
+            document.getElementById('floatingSaveBar')?.classList.add('translate-y-full');
+        }
+    }
+
+    // Fungsi Load dari API
     async function load() {
         try {
-            // Ambil dari API Utama (Cek Sesi)
-            const res = await fetch('/api/auth/me').then(r => r.json());
-            if (res.ok && res.user) {
-                const parts = res.user.full_name.split(" ");
+            // Ambil dari /me untuk basic info
+            const resAuth = await fetch('/api/auth/me').then(r => r.json());
+            if (resAuth.ok && resAuth.user) {
+                const parts = resAuth.user.full_name.split(" ");
                 state.name.first = parts[0];
                 state.name.last = parts.slice(1).join(" ") || "";
-                state.contacts.email = res.user.email;
-                state.contacts.phone = res.user.phone || "";
+                state.contacts.email = resAuth.user.email;
             }
-            // Fallback ke LocalStorage untuk sisa form
-            const raw = localStorage.getItem(KEY);
-            if (raw) {
-                const parsed = JSON.parse(raw);
-                state = { ...state, ...parsed, name: state.name, contacts: state.contacts }; // Timpa tapi biarkan nama/email dari API
+            
+            // Ambil dari Database via API
+            const resDb = await fetch('/api/talent/profile_get').then(r => r.json());
+            if (resDb.ok && resDb.profile) {
+                state = { ...state, ...resDb.profile, name: state.name, contacts: { ...resDb.profile.contacts, email: state.contacts.email } };
+            } else {
+                // Fallback LocalStorage jika DB kosong
+                const raw = localStorage.getItem(KEY);
+                if (raw) state = { ...state, ...JSON.parse(raw), name: state.name };
             }
+            
+            originalState = JSON.parse(JSON.stringify(state)); // Simpan state awal
         } catch (e) {}
     }
 
-    // INTEGRASI API - Fungsi Save
-    function save() {
-        try { localStorage.setItem(KEY, JSON.stringify(state)); } catch {}
-        window.ProfileProgress.update();
-        // TODO: Anda dapat menambahkan pemanggilan POST fetch ke /api/talent/profile_update di sini untuk menyimpan permanen ke DB
-    }
-
+    // Modifikasi save() agar memicu checkDirty
     // UTILS
     function setMode(sectionId, mode) { const el = qs(sectionId); if (el) el.dataset.mode = mode; }
     function getMode(sectionId) { const el = qs(sectionId); return el?.dataset?.mode || "view"; }

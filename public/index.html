@@ -7,39 +7,119 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script>tailwind.config = { theme: { extend: { colors: { primary: '#6b8aed' }, fontFamily: { sans: ['Poppins', 'sans-serif'] } } } }</script>
+    <script>
+        tailwind.config = { theme: { extend: { colors: { primary: '#6b8aed' }, fontFamily: { sans: ['Poppins', 'sans-serif'] } } } }
+    </script>
 </head>
-<body class="bg-gray-50 text-gray-800">
+<body class="bg-gray-50 text-gray-800 antialiased">
 
-    <div id="global-loader" class="fixed inset-0 bg-white z-[100] flex flex-col items-center justify-center">
-        <i class="fa-solid fa-circle-notch fa-spin text-4xl text-primary mb-4"></i>
-        <p class="text-xs font-bold text-gray-400 uppercase tracking-widest animate-pulse">Memuat Antarmuka...</p>
+    <div id="global-loader" class="fixed inset-0 bg-white z-[100] flex flex-col items-center justify-center transition-opacity duration-500">
+        <div class="w-12 h-12 border-4 border-blue-100 border-t-primary rounded-full animate-spin mb-4"></div>
+        <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] animate-pulse">O R L A N D • T A L E N T</p>
     </div>
 
     <div id="app-shell" class="flex min-h-screen hidden">
-        <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-white border-r transform -translate-x-full lg:translate-x-0 transition-transform duration-300">
-            <div class="p-6 font-black text-xl text-primary italic">ORLAND MGMT</div>
-            <nav class="px-4 space-y-2">
-                <a href="javascript:void(0)" onclick="loadModule('dashboard', this)" class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 font-bold transition-all">
-                    <i class="fa-solid fa-house"></i> Beranda
+        
+        <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 flex flex-col">
+            <div class="p-6">
+                <div class="text-xl font-black text-primary tracking-tighter italic">ORLAND<span class="text-gray-400 font-light">TALENT</span></div>
+            </div>
+            
+            <nav class="mt-2 px-4 space-y-1 flex-1 overflow-y-auto">
+                <p class="px-3 text-[10px] font-black text-gray-400 uppercase tracking-wider mb-2 mt-4">Menu Utama</p>
+                <a href="javascript:void(0)" onclick="loadModule('dashboard', this)" class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 transition-all font-bold text-gray-600">
+                    <i class="fa-solid fa-house w-5 text-center"></i> Beranda
                 </a>
-                <a href="javascript:void(0)" onclick="loadModule('profile', this)" class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 font-bold transition-all">
-                    <i class="fa-solid fa-user"></i> Profil
+                <a href="javascript:void(0)" onclick="loadModule('projects', this)" class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 transition-all font-bold text-gray-600">
+                    <i class="fa-solid fa-magnifying-glass w-5 text-center"></i> Cari Casting
                 </a>
-                <button onclick="logout()" class="flex items-center gap-3 p-3 w-full text-red-500 hover:bg-red-50 rounded-xl font-bold mt-10">
-                    <i class="fa-solid fa-power-off"></i> Keluar
-                </button>
+                <a href="javascript:void(0)" onclick="loadModule('comcard_maker', this)" class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 transition-all font-bold text-gray-600">
+                    <i class="fa-solid fa-address-card w-5 text-center"></i> Comp Card Maker
+                </a>
+                
+                <p class="px-3 text-[10px] font-black text-gray-400 uppercase tracking-wider mb-2 mt-6 border-t border-gray-100 pt-4">Akun & Penghasilan</p>
+                <a href="javascript:void(0)" onclick="loadModule('wallet', this)" class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 transition-all font-bold text-gray-600">
+                    <i class="fa-solid fa-wallet w-5 text-center"></i> Dompet Pendapatan
+                </a>
+                <a href="javascript:void(0)" onclick="loadModule('profile', this)" class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 transition-all font-bold text-gray-600">
+                    <i class="fa-solid fa-user-pen w-5 text-center"></i> Profil & Portofolio
+                </a>
+                <a href="javascript:void(0)" onclick="loadModule('session_management', this)" class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-100 transition-all font-bold text-gray-600">
+                    <i class="fa-solid fa-shield-halved w-5 text-center"></i> Keamanan Akun
+                </a>
             </nav>
+            <div class="p-4 border-t border-gray-100">
+                <button onclick="logout()" class="flex items-center justify-center gap-2 p-3 w-full bg-red-50 text-red-600 hover:bg-red-100 rounded-xl transition-all font-black uppercase text-xs tracking-widest">
+                    <i class="fa-solid fa-power-off"></i> Logout
+                </button>
+            </div>
         </aside>
 
-        <div class="flex-1 lg:ml-64 flex flex-col">
-            <header class="bg-white border-b p-4 flex items-center justify-between lg:hidden sticky top-0 z-40">
-                <button onclick="document.getElementById('sidebar').classList.toggle('-translate-x-full')" class="text-gray-600"><i class="fa-solid fa-bars-staggered text-xl"></i></button>
-                <span class="font-black text-primary">TALENT</span>
-                <div class="w-8 h-8 bg-gray-200 rounded-full"></div>
+        <main class="flex-1 lg:ml-64 flex flex-col min-h-screen relative">
+            
+            <header class="bg-white/90 backdrop-blur-md border-b border-gray-200 p-4 flex items-center justify-between sticky top-0 z-40">
+                <div class="flex items-center gap-3">
+                    <button id="mobile-menu-btn" class="lg:hidden w-10 h-10 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-600 transition-colors">
+                        <i class="fa-solid fa-bars-staggered"></i>
+                    </button>
+                    <span class="font-black text-primary tracking-tighter lg:hidden">ORLAND</span>
+                </div>
+
+                <div class="flex items-center gap-2 sm:gap-4 relative">
+                    <div class="relative">
+                        <button id="btn-notif" class="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 transition-colors relative">
+                            <i class="fa-solid fa-bell"></i>
+                            <span id="badge-notif" class="absolute top-2 right-2 w-2.5 h-2.5 bg-red-500 border-2 border-white rounded-full hidden"></span>
+                        </button>
+                        <div id="drop-notif" class="hidden absolute right-0 mt-3 w-72 sm:w-80 bg-white border border-gray-100 rounded-2xl shadow-xl overflow-hidden flex flex-col z-50 transform origin-top-right transition-all">
+                            <div class="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                                <span class="font-black text-sm text-gray-800">Notifikasi</span>
+                            </div>
+                            <div id="list-notif" class="max-h-64 overflow-y-auto p-2">
+                                <div class="text-center text-xs text-gray-400 py-6 font-bold">Belum ada notifikasi.</div>
+                            </div>
+                            <button onclick="loadModule('notifications'); document.getElementById('drop-notif').classList.add('hidden')" class="p-3 text-center text-xs font-black text-primary bg-blue-50/50 hover:bg-blue-50 transition-colors border-t border-gray-100">
+                                Lihat Semua Notifikasi <i class="fa-solid fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="relative">
+                        <button id="btn-profile" class="w-10 h-10 rounded-full bg-blue-50 text-primary border-2 border-white shadow-sm flex items-center justify-center font-black overflow-hidden hover:ring-2 ring-blue-200 transition-all">
+                            <span id="avatar-initial">T</span>
+                        </button>
+                        <div id="drop-profile" class="hidden absolute right-0 mt-3 w-64 bg-white border border-gray-100 rounded-2xl shadow-xl overflow-hidden flex flex-col z-50 transform origin-top-right transition-all">
+                            <div class="p-4 border-b border-gray-100 bg-gray-50 flex items-center gap-3">
+                                <div class="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center font-black text-lg flex-shrink-0" id="dd-avatar">T</div>
+                                <div class="overflow-hidden">
+                                    <h4 class="font-black text-sm text-gray-800 truncate" id="dd-name">Memuat...</h4>
+                                    <p class="text-[10px] text-gray-500 font-bold truncate" id="dd-email">...</p>
+                                </div>
+                            </div>
+                            <div class="p-2 flex flex-col gap-1">
+                                <button onclick="loadModule('profile'); document.getElementById('drop-profile').classList.add('hidden')" class="text-left flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-gray-600 hover:bg-gray-50 hover:text-primary rounded-xl transition-colors">
+                                    <i class="fa-solid fa-user-pen w-4 text-center"></i> Profil & Portofolio
+                                </button>
+                                <button onclick="loadModule('wallet'); document.getElementById('drop-profile').classList.add('hidden')" class="text-left flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-gray-600 hover:bg-gray-50 hover:text-primary rounded-xl transition-colors">
+                                    <i class="fa-solid fa-wallet w-4 text-center"></i> Dompet Pendapatan
+                                </button>
+                                <button onclick="loadModule('session_management'); document.getElementById('drop-profile').classList.add('hidden')" class="text-left flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-gray-600 hover:bg-gray-50 hover:text-primary rounded-xl transition-colors">
+                                    <i class="fa-solid fa-shield-halved w-4 text-center"></i> Keamanan Akun
+                                </button>
+                            </div>
+                            <div class="p-2 border-t border-gray-100">
+                                <button onclick="logout()" class="w-full text-left flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-red-500 hover:bg-red-50 rounded-xl transition-colors">
+                                    <i class="fa-solid fa-arrow-right-from-bracket w-4 text-center"></i> Keluar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
             </header>
-            <main id="main-content" class="p-4 md:p-8"></main>
-        </div>
+
+            <div id="main-content" class="p-4 md:p-8 max-w-7xl mx-auto w-full flex-1"></div>
+        </main>
     </div>
 
     <script type="module">
@@ -51,21 +131,71 @@
         window.logout = logout;
 
         async function init() {
+            const loader = document.getElementById('global-loader');
+            const shell = document.getElementById('app-shell');
+
             try {
                 const user = await checkSession();
+                
                 if (user && user.role === 'talent') {
-                    document.getElementById('global-loader').classList.add('hidden');
-                    document.getElementById('app-shell').classList.remove('hidden');
-                    loadModule('dashboard'); 
+                    document.getElementById('dd-name').textContent = user.full_name || 'Talent Orland';
+                    document.getElementById('dd-email').textContent = user.email || '';
+                    const initial = (user.full_name || 'T').charAt(0).toUpperCase();
+                    document.getElementById('avatar-initial').textContent = initial;
+                    document.getElementById('dd-avatar').textContent = initial;
+
+                    loader.classList.add('opacity-0');
+                    setTimeout(() => {
+                        loader.classList.add('hidden');
+                        shell.classList.remove('hidden');
+                        loadModule('dashboard'); 
+                        fetchNotifications();
+                    }, 500);
                 } else {
                     window.location.href = `${config.SSO_URL}/?redirect=talent`;
                 }
             } catch (e) {
-                console.error(e);
-                alert("Sesi bermasalah. Mengalihkan ke Login...");
                 window.location.href = `${config.SSO_URL}/?redirect=talent`;
             }
         }
+
+        async function fetchNotifications() {
+            try {
+                const res = await fetch(`${config.API_BASE}/api/notifications`, {credentials: 'include'}).then(r=>r.json());
+                if(res.ok && res.data && res.data.items && res.data.items.length > 0) {
+                    const items = res.data.items.slice(0, 5);
+                    document.getElementById('badge-notif').classList.remove('hidden');
+                    document.getElementById('list-notif').innerHTML = items.map(n => `
+                        <div class="p-3 border-b border-gray-50 hover:bg-gray-50 transition-colors cursor-pointer rounded-lg mb-1">
+                            <h5 class="text-xs font-black text-gray-800 mb-0.5">${n.title || 'Notifikasi'}</h5>
+                            <p class="text-[10px] text-gray-500 leading-tight line-clamp-2">${n.message || n.body || ''}</p>
+                        </div>
+                    `).join('');
+                }
+            } catch(e) {}
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const btnMenu = document.getElementById('mobile-menu-btn');
+            const sidebar = document.getElementById('sidebar');
+            const btnNotif = document.getElementById('btn-notif');
+            const dropNotif = document.getElementById('drop-notif');
+            const btnProfile = document.getElementById('btn-profile');
+            const dropProfile = document.getElementById('drop-profile');
+
+            btnMenu?.addEventListener('click', (e) => { e.stopPropagation(); sidebar.classList.toggle('-translate-x-full'); });
+            btnNotif?.addEventListener('click', (e) => { e.stopPropagation(); dropNotif.classList.toggle('hidden'); dropProfile.classList.add('hidden'); });
+            btnProfile?.addEventListener('click', (e) => { e.stopPropagation(); dropProfile.classList.toggle('hidden'); dropNotif.classList.add('hidden'); });
+
+            document.addEventListener('click', (e) => {
+                if(!dropNotif.contains(e.target)) dropNotif.classList.add('hidden');
+                if(!dropProfile.contains(e.target)) dropProfile.classList.add('hidden');
+                if(window.innerWidth < 1024 && !sidebar.contains(e.target) && !btnMenu.contains(e.target)) {
+                    sidebar.classList.add('-translate-x-full');
+                }
+            });
+        });
+
         init();
     </script>
 </body>
